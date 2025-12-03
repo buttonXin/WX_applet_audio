@@ -1,11 +1,7 @@
 <!--index.wxml-->
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <!-- 顶部标题区域 -->
-    <view class="header-section">
-      <text class="app-title">🎙️ 录音小程序</text>
-      <text class="app-subtitle">专业录音工具</text>
-    </view>
+
     
     <!-- 录音功能区域 -->
     <view class="recording-section">
