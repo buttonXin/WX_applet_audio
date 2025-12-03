@@ -1,0 +1,101 @@
+<!--index.wxml-->
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <!-- 顶部标题区域 -->
+    <view class="header-section">
+      <text class="app-title">🎙️ 录音小程序</text>
+      <text class="app-subtitle">专业录音工具</text>
+    </view>
+    
+    <!-- 录音功能区域 -->
+    <view class="recording-section">
+      <view class="recording-title">录音功能</view>
+      
+      <!-- 录音控制按钮 -->
+      <view class="recording-controls">
+        <button 
+          class="record-btn {{isRecording ? 'recording' : ''}}" 
+          bindtap="startRecord"
+          disabled="{{isRecording}}"
+        >
+          {{isRecording ? '🔴 录音中...' : '🎤 开始录音'}}
+        </button>
+        
+        <button 
+          class="stop-btn" 
+          bindtap="stopRecord"
+          disabled="{{!isRecording}}"
+        >
+          ⏹️  停止录音
+        </button>
+      </view>
+      
+      <!-- 录音状态显示 -->
+      <view class="recording-status" wx:if="{{isRecording}}">
+        <text class="recording-indicator">🔴</text>
+        <text class="recording-text">正在录音中... {{recordingCountdown}}秒</text>
+      </view>
+      
+    </view>
+    <!-- 录音文件列表 -->
+    <view class="record-list-section" wx:if="{{recordFiles.length > 0}}">
+      <view class="record-list-title">录音文件列表</view>
+      
+      <view class="record-list">
+        <block wx:for="{{recordFiles}}" wx:key="index" wx:for-index="index">
+          <view class="record-item">
+            <!-- 文件信息区域 -->
+            <view class="record-item-info" bindtap="playFile" data-index="{{index}}">
+              <view class="record-item-name">{{item.fileName}}</view>
+              <view class="record-item-time">录制时间: {{item.recordTime}}</view>
+              <view class="record-item-duration">录制时长: {{item.duration || '计算中...'}}秒</view>
+            </view>
+            
+            <!-- 操作按钮区域 -->
+            <view class="record-item-actions">
+              <!-- 编辑按钮 -->
+              <button 
+                class="edit-btn" 
+                bindtap="editFileName" 
+                data-index="{{index}}"
+              >
+                编辑
+              </button>
+              
+              <!-- 删除按钮 -->
+              <button 
+                class="delete-btn" 
+                bindtap="deleteFile" 
+                data-index="{{index}}"
+              >
+                删除
+              </button>
+            </view>
+            
+            <!-- 播放控制 -->
+            <view class="playback-controls" wx:if="{{currentPlayingIndex === index}}">
+              <view class="playback-main">
+                <button 
+                  class="playing-btn" 
+                  disabled="{{true}}"
+                >
+                  播放中
+                </button>
+                <!-- <view class="playback-duration">
+                  <text class="duration-label">时长:</text>
+                  <text class="duration-value">{{item.duration || '0'}}秒</text>
+                </view> -->
+              </view>
+              <button 
+                class="stop-btn" 
+                bindtap="stopPlay"
+              >
+                停止
+              </button>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</scroll-view>
