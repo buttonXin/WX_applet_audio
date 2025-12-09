@@ -10,9 +10,9 @@
 
   <view class="player">
     <text class="time">{{currentTime}} / {{duration}}</text>
-    <view class="bar">
-      <view class="bar-fill" style="width: {{progress}}%;"></view>
-    </view>
+    <!-- <view class="bar">
+      <view class="bar-fill" style="width: {{progress}}"></view>
+    </view> -->
     <view class="actions">
       <button size="mini" bindtap="onToggleLoop" type="{{loop ? 'primary' : 'default'}}">{{loop ? '循环中' : '单次'}}</button>
       <button size="mini" bindtap="onSetAB">{{abMode ? 'A-B 循环中' : '设 A-B'}}</button>
