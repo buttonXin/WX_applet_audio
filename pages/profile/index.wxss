@@ -1,0 +1,12 @@
+.page { min-height: 100vh; padding: 40rpx 32rpx; background: #f5f8f6; box-sizing: border-box; }
+.profile { display: flex; align-items: center; gap: 20rpx; margin-bottom: 30rpx; }
+.avatar-btn { padding: 0; border: none; background: none; }
+.avatar { width: 120rpx; height: 120rpx; border-radius: 50%; background: #dfe9e3; }
+.info .name { font-size: 32rpx; font-weight: 700; color: #0b5132; }
+.info .desc { display: block; color: #6f8a7b; margin-top: 6rpx; }
+.panel { background: #fff; border-radius: 16rpx; box-shadow: 0 8rpx 22rpx rgba(0,0,0,0.06); overflow: hidden; }
+.item { padding: 20rpx; border-bottom: 1px solid #eef2ef; display: flex; justify-content: space-between; color: #0b5132; }
+.item:last-child { border-bottom: none; }
+.muted { color: #8da299; }
+.warn { color: #ff6b6b; }
+.primary { margin-top: 30rpx; background: #1abc8c; color: #fff; border: none; border-radius: 14rpx; }

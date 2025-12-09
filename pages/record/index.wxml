@@ -1,0 +1,31 @@
+<view class="page">
+  <view class="hero">
+    <text class="title">开始录音</text>
+    <text class="subtitle">{{recording ? '录音中...' : '点击开始录音'}}</text>
+  </view>
+
+  <view class="wave">
+    <view class="wave-bar" wx:for="{{20}}" wx:key="*this" style="height: {{recording ? (20 + index*2) % 60 + 20 : 10}}rpx;"></view>
+  </view>
+
+  <view class="timer">{{durationText}}</view>
+
+  <view class="controls">
+    <button class="btn primary" bindtap="onStart" wx:if="{{!recording}}">开始</button>
+    <button class="btn danger" bindtap="onStop" wx:else>停止</button>
+    <button class="btn ghost" bindtap="onSave" open-type="getUserInfo" with-share-ticket="{{true}}" plain>收藏</button>
+  </view>
+
+  <view class="last">
+    <text class="label">上次录音</text>
+    <view class="card" wx:if="{{lastRecord}}">
+      <view class="card-title">{{lastRecord.name || '未命名'}}</view>
+      <view class="card-meta">{{lastRecord.duration}} 秒</view>
+      <view class="card-actions">
+        <button size="mini" bindtap="onPlayLast">播放</button>
+        <button size="mini" bindtap="onRenameLast">重命名</button>
+      </view>
+    </view>
+    <text class="empty" wx:else>暂无录音</text>
+  </view>
+</view>

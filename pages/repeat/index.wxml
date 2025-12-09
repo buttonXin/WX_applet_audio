@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="header">
+    <text class="title">复读机</text>
+    <text class="subtitle">选择录音并循环/变速播放</text>
+  </view>
+
+  <picker mode="selector" range="{{recordNames}}" bindchange="onPick">
+    <view class="picker">{{currentName || '选择录音'}}</view>
+  </picker>
+
+  <view class="player">
+    <text class="time">{{currentTime}} / {{duration}}</text>
+    <view class="bar">
+      <view class="bar-fill" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="actions">
+      <button size="mini" bindtap="onToggleLoop" type="{{loop ? 'primary' : 'default'}}">{{loop ? '循环中' : '单次'}}</button>
+      <button size="mini" bindtap="onSetAB">{{abMode ? 'A-B 循环中' : '设 A-B'}}</button>
+      <button size="mini" bindtap="onClearAB" plain>清除 A-B</button>
+    </view>
+    <view class="actions">
+      <button class="main" bindtap="onPlay">{{playing ? '暂停' : '播放'}}</button>
+      <slider class="slider" min="0.5" max="2.0" step="0.1" value="{{speed}}" show-value bindchange="onSpeedChange" />
+    </view>
+  </view>
+</view>

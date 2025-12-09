@@ -1,21 +1,20 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/logs/logs"
+    "pages/record/index",
+    "pages/repeat/index",
+    "pages/fav/index",
+    "pages/profile/index"
   ],
-  "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "录音小程序",
-    "navigationBarBackgroundColor": "#ffffff"
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#07c160",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/record/index", "text": "录音", "iconPath": "assets/rec.png", "selectedIconPath": "assets/rec_on.png" },
+      { "pagePath": "pages/repeat/index", "text": "复读机", "iconPath": "assets/repeat.png", "selectedIconPath": "assets/repeat_on.png" },
+      { "pagePath": "pages/fav/index", "text": "收藏", "iconPath": "assets/fav.png", "selectedIconPath": "assets/fav_on.png" },
+      { "pagePath": "pages/profile/index", "text": "我的", "iconPath": "assets/me.png", "selectedIconPath": "assets/me_on.png" }
+    ]
   },
-  "permission": {
-    "scope.record": {
-      "desc": "需要录音权限用于录制音频"
-    }
-  },
-  "requiredBackgroundModes": ["audio"],
-  "style": "v2",
-  "componentFramework": "glass-easel",
-  "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents"
+  "window": { "navigationBarTitleText": "录音器" }
 }
