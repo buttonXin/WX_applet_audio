@@ -7,6 +7,6 @@
 .time { font-family: monospace; color: #0b5132; }
 .bar { margin: 16rpx 0; height: 10rpx; background: #e6efea; border-radius: 999rpx; overflow: hidden; }
 .bar-fill { height: 100%; background: linear-gradient(90deg, #1abc8c, #2fd7a8); }
-.actions { display: flex; gap: 12rpx; margin-top: 12rpx; align-items: center; }
+.actions { padding: 24rpx; display: flex; gap: 12rpx; margin-top: 12rpx; align-items: center; }
 .main { flex: 1; background: #1abc8c; color: #fff; border: none; border-radius: 12rpx; }
 .slider { flex: 1; }

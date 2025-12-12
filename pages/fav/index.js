@@ -6,6 +6,7 @@ Page({
   onUnload() { player.stop(); },
   refresh() {
     const list = wx.getStorageSync('favList') || [];
+    console.log('来自右上角菜单:' + list[0].path);
     this.setData({ list });
   },
   findById(id) { return this.data.list.find(i => String(i.id) === String(id)); },
@@ -41,6 +42,7 @@ Page({
           const list = this.data.list.filter(i => i.id !== id);
           wx.setStorageSync('favList', list);
           this.setData({ list });
+          player.stop();
         }
       }
     });

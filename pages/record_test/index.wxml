@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="top">
+    <text class="slogan">人类的本质是复读机 </text>
+    <view class="hero">
+      <text class="title">开始录音</text>
+      <text class="subtitle">{{recording ? '录音中...' : '点击开始录音'}}</text>
+    </view>
+  </view>
+
+  <view class="last">
+    <text class="label">上次录音</text>
+    <view class="card" wx:if="{{lastRecord}}">
+      <view class="card-row">
+        <view class="card-info">
+          <view class="card-title">{{lastRecord.name || '未命名'}}</view>
+          <view class="card-meta">时长：{{lastRecord.duration}} 秒</view>
+          <view class="card-time">时间：{{lastRecord.startedAtText || '--'}}</view>
+        </view>
+        <button class="play-btn" type="primary" bindtap="onTogglePlay">{{playing ? '停止' : '播放'}}</button>
+      </view>
+      <view class="card-actions">
+        <button class="third-btn" bindtap="onRenameLast">重命名</button>
+        <button class="third-btn primary-ghost" bindtap="onSave">收藏</button>
+        <button class="third-btn info-ghost" bindtap="onShare">分享</button>
+      </view>
+    </view>
+    <text class="empty" wx:else>暂无录音</text>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="timer">{{durationText}}</view>
+    <button class="btn primary" bindtap="onStart" wx:if="{{!recording}}">开始录音</button>
+    <button class="btn danger" bindtap="onStop" wx:else>停止</button>
+  </view>
+</view>

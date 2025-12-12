@@ -1,24 +1,22 @@
 <view class="page">
-  <view class="header">
-    <text class="title">收藏</text>
-    <text class="subtitle">已收藏的录音</text>
-  </view>
-
-  <block wx:if="{{list.length}}">
-    <view class="card" wx:for="{{list}}" wx:key="id">
-      <view class="row">
-        <text class="name">{{item.name}}</text>
-        <text class="duration">{{item.duration}} 秒</text>
+  <view class="title">我的收藏</view>
+  <view wx:if="{{list.length}}">
+    <block wx:for="{{list}}" wx:key="id">
+      <view class="card">
+        <view class="row">
+          <view class="info">
+            <view class="name">{{item.name}}</view>
+            <view class="meta">时长：{{item.duration}} 秒</view>
+            <view class="meta">时间：{{item.startedAtText || '--'}}</view>
+          </view>
+          <button class="play" size="mini" bindtap="onPlay" data-id="{{item.id}}">播放</button>
+        </view>
+        <view class="actions">
+          <button class="ghost" size="mini" bindtap="onRename" data-id="{{item.id}}">重命名</button>
+          <button class="warn" size="mini" bindtap="onRemove" data-id="{{item.id}}">删除</button>
+        </view>
       </view>
-      <view class="meta">{{item.createdAt}}</view>
-      <view class="actions">
-        <button size="mini" bindtap="onPlay" data-id="{{item.id}}">播放</button>
-        <button size="mini" bindtap="onRename" data-id="{{item.id}}" plain>重命名</button>
-        <button size="mini" type="warn" bindtap="onRemove" data-id="{{item.id}}">删除</button>
-      </view>
-    </view>
-  </block>
-  <view class="empty" wx:else>
-    <text>暂无收藏，去录音页收藏一个吧</text>
+    </block>
   </view>
+  <view class="empty" wx:else>暂无收藏</view>
 </view>
