@@ -1,0 +1,75 @@
+<view class="page">
+  <view class="top">
+    <text class="slogan">人类的本质是复读机 </text>
+    <view class="hero">
+      <text class="title">开始录音</text>
+      <text class="subtitle">{{recording ? '录音中...' : '点击开始录音'}}</text>
+    </view>
+  </view>
+
+  <view class="last">
+    <text class="label">上次录音</text>
+    <view class="card" wx:if="{{lastRecord}}">
+      <view class="card-row">
+        <view class="card-info">
+          <view class="card-title">{{lastRecord.name || '未命名'}}</view>
+          <view class="card-meta">时长：{{lastRecord.duration}} 秒</view>
+          <view class="card-time">时间：{{lastRecord.startedAtText || '--'}}</view>
+        </view>
+        <button class="play-btn" type="primary" bindtap="onTogglePlay">{{playing ? '停止' : '播放'}}</button>
+      </view>
+      <view class="card-actions">
+        <button class="third-btn" bindtap="onRenameLast">重命名</button>
+        <button class="third-btn primary-ghost" bindtap="onSave">收藏</button>
+        <button class="third-btn info-ghost" bindtap="onShare">分享</button>
+      </view>
+    </view>
+    <text class="empty" wx:else>暂无录音</text>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="timer">{{durationText}}</view>
+    <button class="btn primary" bindtap="onStart" wx:if="{{!recording}}">开始录音</button>
+    <button class="btn danger" bindtap="onStop" wx:else>停止</button>
+  </view>
+
+  <!-- 分享菜单弹窗 -->
+<view class="share-mask" wx:if="{{showShareMenu}}" bindtap="hideShareMenu">
+  <view class="share-menu" catchtap="">
+     <!-- 直接分享 - 使用 button -->
+     <button 
+      class="share-menu-item share-btn" 
+      open-type="share"
+      data-type="direct"
+      bindtap="onDirectShare"
+    >
+      <text>直接分享</text>
+    </button>
+    
+    <!-- 文字封面 - 先输入文字，再分享 -->
+    <view class="share-menu-item" bindtap="onTextCoverShare">
+      <text>文字封面图</text>
+    </view>
+    
+    <!-- 阅后即焚 - 使用 button -->
+    <button 
+      class="share-menu-item share-btn" 
+      open-type="share"
+      data-type="burnRead"
+      bindtap="onBurnReadShare"
+    >
+      <text>阅后即焚</text>
+    </button>
+    <!-- <view class="share-menu-cancel" bindtap="hideShareMenu">取消</view> -->
+  </view>
+</view>
+
+<!-- 用于生成文字封面的 canvas（隐藏） -->
+<canvas 
+  type="2d" 
+  id="textCoverCanvas" 
+  class="text-cover-canvas"
+  style="width: 375px; height: 300px; position: fixed; left: -9999px;"
+></canvas>
+
+</view>

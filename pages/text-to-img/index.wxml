@@ -1,0 +1,41 @@
+<view class="container">
+  <!-- 文字输入框 -->
+  <textarea 
+    class="input-text" 
+    placeholder="请输入要转换的文字..." 
+    bindinput="onTextInput"
+    value="{{inputText}}"
+  ></textarea>
+
+  <!-- 生成图片预览区域 -->
+  <view class="preview-container" style="background-color: {{bgColor}};">
+    <!-- Canvas：用于绘制最终生成的图片（隐藏，仅后台绘制） -->
+    <canvas type="2d" id="mainCanvas" style="width: 600rpx; height: 800rpx; position: absolute; top: -9999rpx;"></canvas>
+    
+    <!-- 可视化预览区 -->
+    <view class="preview-card">
+      <!-- 标题 -->
+      <view class="title">复读机</view>
+      
+      <!-- 文字转图片区域 -->
+      <view class="text-img-area" wx:if="{{textImgPath}}">
+        <image src="{{textImgPath}}" mode="widthFix"></image>
+      </view>
+      <view class="text-placeholder" wx:else>
+        请输入文字生成图片
+      </view>
+      
+      <!-- 二维码区域 -->
+      <view class="qrcode-area" wx:if="{{qrcodePath}}">
+        <image src="{{qrcodePath}}" mode="widthFix"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能按钮 -->
+  <view class="btn-group">
+    <button bindtap="changeBgColor" class="btn change-color">换颜色</button>
+    <button bindtap="generateImage" class="btn generate">生成图片</button>
+    <button bindtap="saveToAlbum" class="btn save">保存到相册</button>
+  </view>
+</view>

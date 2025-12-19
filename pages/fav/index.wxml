@@ -12,9 +12,10 @@
           <button class="play" size="mini" bindtap="onPlay" data-id="{{item.id}}">播放</button>
         </view>
         <view class="actions">
-          <button class="ghost" size="mini" bindtap="onRename" data-id="{{item.id}}">重命名</button>
-          <button class="warn" size="mini" bindtap="onRemove" data-id="{{item.id}}">删除</button>
-        </view>
+      <button class="btn ghost" data-id="{{item.id}}" bindtap="onRename">重命名</button>
+      <button class="btn warn" data-id="{{item.id}}" bindtap="onRemove">删除</button>
+      <button class="btn info-ghost" data-id="{{item.id}}" bindtap="onShare">分享</button>
+    </view>
       </view>
     </block>
   </view>

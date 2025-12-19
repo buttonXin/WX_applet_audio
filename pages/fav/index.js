@@ -1,21 +1,27 @@
 const player = wx.createInnerAudioContext();
+player.obeyMuteSwitch = false;
+player.volume = 1; // 增大播放音量
 
 Page({
   data: { list: [] },
+
   onShow() { this.refresh(); },
   onUnload() { player.stop(); },
+
   refresh() {
     const list = wx.getStorageSync('favList') || [];
-    console.log('来自右上角菜单:' + list[0].path);
     this.setData({ list });
   },
+
   findById(id) { return this.data.list.find(i => String(i.id) === String(id)); },
+
   onPlay(e) {
     const item = this.findById(e.currentTarget.dataset.id);
     if (!item) return;
     player.src = item.path;
     player.play();
   },
+
   onRename(e) {
     const item = this.findById(e.currentTarget.dataset.id);
     if (!item) return;
@@ -32,6 +38,7 @@ Page({
       }
     });
   },
+
   onRemove(e) {
     const id = e.currentTarget.dataset.id;
     wx.showModal({
@@ -45,6 +52,17 @@ Page({
           player.stop();
         }
       }
+    });
+  },
+
+  onShare(e) {
+    const item = this.findById(e.currentTarget.dataset.id);
+    if (!item) return;
+    wx.shareAppMessage({
+      title: item.name || '我的录音',
+      path: '/pages/record/index',
+      success: () => wx.showToast({ title: '分享成功', icon: 'success' }),
+      fail: err => err && console.error('分享失败', err)
     });
   }
 });
