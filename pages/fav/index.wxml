@@ -1,4 +1,7 @@
 <view class="page">
+  <view class="top">
+    <text class="slogan">人类的本质是复读机-.-</text>
+  </view>
   <view class="title">我的收藏</view>
   <view wx:if="{{list.length}}">
     <block wx:for="{{list}}" wx:key="id">

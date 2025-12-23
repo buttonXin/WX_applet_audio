@@ -1,6 +1,6 @@
 <view class="page">
   <view class="top">
-    <text class="slogan">人类的本质是复读机 </text>
+    <text class="slogan">人类的本质是复读机-.-</text>
     <view class="hero">
       <text class="title">开始录音</text>
       <text class="subtitle">{{recording ? '录音中...' : '点击开始录音'}}</text>
@@ -42,14 +42,10 @@
       open-type="share"
       data-type="direct"
       bindtap="onDirectShare"
+      data-action="direct"
     >
       <text>直接分享</text>
     </button>
-    
-    <!-- 文字封面 - 先输入文字，再分享 -->
-    <view class="share-menu-item" bindtap="onTextCoverShare">
-      <text>文字封面图</text>
-    </view>
     
     <!-- 阅后即焚 - 使用 button -->
     <button 
@@ -57,10 +53,11 @@
       open-type="share"
       data-type="burnRead"
       bindtap="onBurnReadShare"
+      data-action="burn"
     >
       <text>阅后即焚</text>
     </button>
-    <!-- <view class="share-menu-cancel" bindtap="hideShareMenu">取消</view> -->
+    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听</view>
   </view>
 </view>
 

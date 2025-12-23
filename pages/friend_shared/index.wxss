@@ -1,0 +1,139 @@
+/* 页面容器 */
+.page { min-height: 100vh; padding: 40rpx 32rpx 160rpx; background: linear-gradient(180deg, #f6fff9 0%, #f2f6f3 100%); box-sizing: border-box; }
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+}
+
+.top { text-align: center; margin-bottom: 24rpx; }
+.slogan { font-size: 24rpx; color: #7c9087;text-align: center; }
+.burn_text {  margin-top: 40rpx;font-size: 30rpx; font-weight: 700; color: #0b5132; }
+
+/* 顶部区域 - 占据剩余空间 */
+.top-area {
+  flex: 1;
+}
+
+/* 底部区域 - 固定在底部 */
+.bottom-area {
+  padding: 40rpx;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+/* 录音卡片区域 */
+.last {
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.card-info {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.card-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.card-meta {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.card-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.play-btn {
+  width: 140rpx !important;
+  height: 72rpx;
+  line-height: 72rpx;
+  font-size: 28rpx;
+  border-radius: 36rpx;
+  padding: 0;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 24rpx;
+}
+
+.third-btn {
+  flex: 1;
+  height: 68rpx;
+  line-height: 68rpx;
+  font-size: 26rpx;
+  border-radius: 34rpx;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  padding: 0;
+}
+
+.third-btn::after {
+  border: none;
+}
+
+.third-btn.primary-ghost {
+  background: rgba(25, 137, 250, 0.1);
+  color: #1989fa;
+}
+
+.third-btn.info-ghost {
+  background: rgba(7, 193, 96, 0.1);
+  color: #07c160;
+}
+
+.empty {
+  display: block;
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding: 60rpx 0;
+  background: #fff;
+  border-radius: 24rpx;
+}
+
+/* 固定在底部的方式 */
+.bottom-area {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 40rpx;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  background: transparent;
+}
+

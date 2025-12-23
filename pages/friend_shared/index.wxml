@@ -1,0 +1,36 @@
+<view class="page">
+
+  <view class="top">
+    <text class="slogan">人类的本质是复读机-.-</text>
+    <view class="hero">
+      <text class="burn_text">{{displayString}}</text>
+    </view>
+  </view>
+
+
+  
+  <view class="bottom-area">
+    <!-- 使用三元运算符根据 checkStatus 显示不同文案 -->
+  <text class="label">
+    {{checkStatus === 'pendding' ? '正在审核' : 
+      checkStatus === 'pass' ? '' : 
+      checkStatus === 'reject' ? '审核未通过!' :''}}
+  </text>
+    <view class="card" wx:if="{{lastRecord}}">
+      <view class="card-row">
+        <view class="card-info">
+          <view class="card-title">{{lastRecord.name || '未命名'}}</view>
+          <view class="card-meta">时长：{{lastRecord.duration}} 秒</view>
+          <view class="card-time">时间：{{lastRecord.startedAtText || '--'}}</view>
+        </view>
+        <button class="play-btn" type="primary" bindtap="onTogglePlay" wx:if="{{canShare}}">{{playing ? '停止' : '播放'}}</button>
+      </view>
+      <view class="card-actions" wx:if="{{showBurnButtons}}">
+        <button class="third-btn" bindtap="onRenameLast" >重命名</button>
+        <button class="third-btn primary-ghost" bindtap="onSave" >收藏</button>
+        <button  class="third-btn info-ghost" data-action="direct" open-type="share" bindtap="onShare">分享</button>
+      </view>
+    </view>
+  </view>
+
+</view>

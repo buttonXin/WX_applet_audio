@@ -4,7 +4,7 @@ const player = wx.createInnerAudioContext();
 
 // 将duration改为20000毫秒（20秒）
 const MAX_DURATION = 20000; // 最大录制时长20秒
-const MAX_SHARE_COUNT = 10; // 每天最大分享次数
+const MAX_SHARE_COUNT = 100; // 每天最大分享次数
 
 const recOptions = { 
   duration: MAX_DURATION, // 录音最大时长
@@ -53,12 +53,7 @@ Page({
     playing: false,
     userInfo: null,
 
-    
-    // 分享相关
-    shareFileID: null,         // 当前分享的fileID
-    shareType: 'direct',       // 分享类型: direct/textCover/burnRead
-    shareCoverText: '',        // 文字封面内容
-    shareImageUrl: ''          // 分享封面图URL
+
   },
   
   onLoad() {
@@ -83,7 +78,9 @@ Page({
         duration: Math.round(this.data.durationMs / 1000),
         path: res.tempFilePath,
         startedAt,
-        fileID: ''
+        fileID: '',
+        audioId: '',  // 分享的音频id ,用于查询
+        openid: ''     // 用于查询
       });
       wx.setStorageSync('lastRecord', lastRecord);
       this.setData({ 
@@ -170,8 +167,8 @@ Page({
   },
 
   // 数据增加fileID
-  withAduioFileID(rec , fileID) {
-    const updated = this.withStartText({ ...rec, fileID: fileID });
+  withAduioUpdateIDs(rec , fileID, audioId , openid) {
+    const updated = this.withStartText({ ...rec, fileID: fileID , audioId: audioId, openid : openid});
     wx.setStorageSync('lastRecord', updated);
     this.setData({ lastRecord: updated });
   },
@@ -300,12 +297,35 @@ Page({
   onSave() {
     const last = this.data.lastRecord;
     if (!last) return wx.showToast({ title: '先录一段音', icon: 'none' });
-    const favs = wx.getStorageSync('favList') || [];
-    favs.unshift({ ...last, id: Date.now() });
-    wx.setStorageSync('favList', favs);
-    wx.showToast({ title: '已收藏', icon: 'success' });
+  
+    let favs = wx.getStorageSync('favList') || [];
+  
+    // 1. 查找同 id 的旧记录
+    const oldItemIndex = favs.findIndex(item => item.id === last.id);
+    const oldItem = oldItemIndex > -1 ? favs[oldItemIndex] : null;
+  
+    // 2. 分场景处理
+    if (!oldItem) {
+      // 场景1：未收藏过 → 直接添加
+      favs.unshift({ ...last, id: last.id });
+      wx.setStorageSync('favList', favs);
+      wx.showToast({ title: '已收藏', icon: 'success' });
+    } else {
+      // 场景2：已收藏 → 判断 fileID 是否需要更新
+      if (oldItem.fileID && last.fileID) {
+        // 场景2.1：新旧记录 fileID 都非空 → 提示无需更新
+        wx.showToast({ title: '已收藏且信息完整，无需重复保存', icon: 'none' });
+      } else {
+        // 场景2.2：旧记录 fileID 为空，新记录非空 → 替换旧记录
+        favs.splice(oldItemIndex, 1); // 删除旧记录
+        favs.unshift({ ...last, id: last.id }); // 添加新记录
+        wx.setStorageSync('favList', favs);
+        wx.showToast({ title: '已更新收藏', icon: 'success' });
+      }
+    }
+  
+    console.log("最终收藏列表 = ", JSON.stringify(favs));
 
-    console.log(  "last = " , JSON.stringify(last))
   },
   
   async onShare() {
@@ -352,24 +372,29 @@ Page({
         });
         console.log('上传成功 fileID = ', uploadRes.fileID);   
 
-        this.withAduioFileID(last , uploadRes.fileID);
+       
         // 这里需要重新获取一下才行.
         console.log(  "last = " , JSON.stringify(this.data.lastRecord))
 
         const audioId = await this.mediaCheckAndSave(uploadRes.fileID, last);
-        console.log('audioId:', audioId );
+        console.log('audioId:', audioId + " , openid=" + userId);
+         // 存一下fileID
+        this.withAduioUpdateIDs(last , uploadRes.fileID , audioId, userId);
+      
         
         //  审核通过，增加分享次数
         const newCount = this.incrementShareCount();
         console.log('分享次数:', newCount );
 
         wx.hideLoading();
+         // 显示分享菜单
+        this.setData({ showShareMenu: true });
       } else {
         // fileID 不为空，执行其他操作
-        
+         // 显示分享菜单
+        wx.hideLoading();
+        this.setData({ showShareMenu: true });
       }
-      // 显示分享菜单
-      this.setData({ showShareMenu: true });
 
     } catch (err) {
           console.error('分享失败:', err);
@@ -419,7 +444,7 @@ Page({
       });
       
       wx.showToast({
-        title: '上传成功，审核中, 可先进行分享',
+        title: '上传成功',
         icon: 'success'
       });
       
@@ -442,176 +467,89 @@ Page({
   },
   
   // 直接分享
-  async onDirectShare() {
-    this.setData({ showShareMenu: false });
-  },
-  
-  // 文字封面分享
-  onTextCoverShare() {
-    this.setData({ showShareMenu: false });
+  onDirectShare() {
+    this.setData({ showShareMenu: false  });
+    const db = wx.cloud.database();
     
-    wx.navigateTo({
-      url: '/pages/text-to-img/index',
-      fail: (err) => {
-        console.log('跳转分享页失败', err);
-        wx.showToast({ title: '分享失败，请重试', icon: 'none' });
+    db.collection('audios').where({
+      _id: last.audioId,
+      _openid: last.openid
+    }).update({
+      data: {
+        burn : 1 // 更新字段   1表示直接分享 , 2 表示阅后即焚 , 3 表示 用户已读 其他用户无法再读取.
       }
     });
-
-    // wx.showModal({
-    //   title: '输入封面文字',
-    //   editable: true,
-    //   placeholderText: '请输入封面文字',
-    //   success: async (res) => {
-    //     if (res.confirm) {
-    //       const text = res.content?.trim() || '我的录音';
-    //       this.setData({ shareCoverText: text });
-    //       await this.uploadAndShare('textCover', text);
-    //     }
-    //   }
-    // });
   },
+  
+  // 阅后即焚 分享
+  onBurnReadShare() {
+    this.setData({ showShareMenu: false });
+    const last = this.data.lastRecord;
 
-
-  async uploadAndShare(shareType, coverText = '') {
-        const last = this.data.lastRecord;
-        wx.showLoading({ title: '生成封面...', mask: true });
-        const resultImage = await this.generateTextCover(coverText);
-        wx.hideLoading();
-
-        // this.setData({
-        //   shareFileID: last.fileID,
-        //   shareImageUrl: shareImageUrl
-        // });
-        return resultImage;
-
+    const db = wx.cloud.database();
+    
+    db.collection('audios').where({
+      _id: last.audioId,
+      _openid: last.openid
+    }).update({
+      data: {
+        burn : 2 // 更新字段  
+      }
+    });
   },
 
     // 分享回调
   onShareAppMessage(res) {
-    const {  shareImageUrl, lastRecord } = this.data;
+    const {   lastRecord } = this.data;
+ 
+    console.log("分享数据" , JSON.stringify(lastRecord) )
 
-    if (res.from === 'button') {
-      console.log(res.target) // 获取触发按钮信息
+    console.log('分享来源:', res.from); // 'button' 或 'menu'
+    console.log('分享目标:', res.target); // 当 from == 'button' 时，包含被点击按钮的信息
+
+    // 获取按钮信息（如果按钮设置了 data-* 属性）
+    let shareAction = 'right-top-share';
+    if (res.from === 'button' && res.target && res.target.dataset) {
+      shareAction = res.target.dataset.action || ''; // 获取 data-action
+      console.log("分享按钮的 action:", shareAction);
     }
-    const shareData = {
-      title:  '人类的本质是复读机-.-',
-      path: '/pages/profile/index',
+
+    // 2. 对参数值编码（处理中文/特殊字符）
+    const encodedParams = {
+      shareType: encodeURIComponent(shareAction),
+      name: encodeURIComponent(lastRecord.name),
+      duration: encodeURIComponent(lastRecord.duration),
+      startedAtText: encodeURIComponent(lastRecord.startedAtText),
+      fileID: encodeURIComponent(lastRecord.fileID),
+      audioId: lastRecord.audioId,
+      openid: lastRecord.openid,
     };
-    
-    // 如果有自定义封面图
-    if (shareImageUrl) {
-      shareData.imageUrl = shareImageUrl;
-    }
-    
-    console.log('分享数据:', shareData);
-    
-    return shareData;
-  },
 
-  // 生成文字封面图
-  async generateTextCover(text) {
-    return new Promise((resolve, reject) => {
-      const query = wx.createSelectorQuery();
-      query.select('#textCoverCanvas')
-        .fields({ node: true, size: true })
-        .exec(async (res) => {
-          if (!res[0]) {
-            console.error('Canvas not found');
-            resolve('');
-            return;
-          }
-          
-          const canvas = res[0].node;
-          const ctx = canvas.getContext('2d');
-          
-          // 设置canvas尺寸（5:4比例，适合分享卡片）
-          const dpr = wx.getSystemInfoSync().pixelRatio;
-          canvas.width = 500 * dpr;
-          canvas.height = 400 * dpr;
-          ctx.scale(dpr, dpr);
-          
-          // 绘制背景渐变
-          const gradient = ctx.createLinearGradient(0, 0, 500, 400);
-          gradient.addColorStop(0, '#667eea');
-          gradient.addColorStop(1, '#764ba2');
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, 500, 400);
-          
-          // 绘制装饰圆圈
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-          ctx.beginPath();
-          ctx.arc(400, 50, 100, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.arc(50, 350, 80, 0, Math.PI * 2);
-          ctx.fill();
-          
-          // 绘制音符图标
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-          ctx.font = 'bold 60px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText('🎵', 250, 100);
-          
-          // 绘制文字
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 36px sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          
-          // 文字换行处理
-          const maxWidth = 400;
-          const lineHeight = 50;
-          const words = text.split('');
-          let line = '';
-          let lines = [];
-          
-          for (let i = 0; i < words.length; i++) {
-            const testLine = line + words[i];
-            const metrics = ctx.measureText(testLine);
-            if (metrics.width > maxWidth && line !== '') {
-              lines.push(line);
-              line = words[i];
-            } else {
-              line = testLine;
-            }
-          }
-          lines.push(line);
-          
-          // 最多显示3行
-          if (lines.length > 3) {
-            lines = lines.slice(0, 3);
-            lines[2] = lines[2].slice(0, -1) + '...';
-          }
-          
-          // 绘制文字
-          const startY = 200 - ((lines.length - 1) * lineHeight) / 2;
-          lines.forEach((line, index) => {
-            ctx.fillText(line, 250, startY + index * lineHeight);
-          });
-          
-          // 绘制底部提示
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-          ctx.font = '24px sans-serif';
-          ctx.fillText('点击收听语音', 250, 350);
-          
-          // 导出图片
-          try {
-            const tempFilePath = await new Promise((res, rej) => {
-              wx.canvasToTempFilePath({
-                canvas: canvas,
-                success: (result) => res(result.tempFilePath),
-                fail: rej
-              });
-            });
-            
-            this.setData({ shareImageUrl: tempFilePath});
-            
-          } catch (err) {
-            console.error('生成封面失败:', err);
-            resolve('');
-          }
-        });
-    });
-  }
+    let pathIndex = '' ;
+    if(shareAction === 'burn'){
+      pathIndex = '/pages/friend_shared/index?id=shaerd';
+    }else 
+    if(shareAction === 'direct'){
+      pathIndex = '/pages/friend_shared/index?id=shaerd';
+    }else{
+      return {
+        title: '人类的本质是复读机-.-',
+        path: '/pages/record_test_cloud/index', // 携带多个参数的路径
+        imageUrl: null, // 之前生成的图片作为封面
+        // desc: '包含多个参数的复读机分享'
+      };
+    }
+
+    // 3. 拼接分享路径（多个参数用 & 连接） 这里注意回车会导致数据增加
+    const sharePath = `${pathIndex}&shareType=${encodedParams.shareType}&audioId=${encodedParams.audioId}&openid=${encodedParams.openid}&name=${encodedParams.name}&duration=${encodedParams.duration}&startedAtText=${encodedParams.startedAtText}&fileID=${encodedParams.fileID}`;
+
+    console.log('分享数据:', sharePath);
+    // 4. 返回分享配置
+    return {
+      title: '人类的本质是复读机-.-',
+      path: sharePath, // 携带多个参数的路径
+      imageUrl: null, // 之前生成的图片作为封面
+      // desc: '包含多个参数的复读机分享'
+    };
+  },
 });
