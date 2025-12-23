@@ -255,7 +255,25 @@ Page({
         recorder.start(recOptions);
         this.setData({ recording: true });
       },
-      fail: () => wx.showToast({ title: '请开启录音权限', icon: 'none' })
+      fail() {
+        // 授权失败，引导用户打开设置
+        wx.showModal({
+          title: '需要录音权限',
+          content: '请前往设置开启录音权限，否则无法使用音频录制功能',
+          confirmText: '去设置',
+          success(res) {
+            if (res.confirm) {
+              wx.openSetting({
+                success(settingRes) {
+                  if (settingRes.authSetting['scope.record']) {
+                    wx.showToast({ title: '权限已开启', icon: 'success' });
+                  }
+                }
+              });
+            }
+          }
+        });
+      }
     });
   },
   

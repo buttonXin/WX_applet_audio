@@ -5,6 +5,11 @@
     "pages/repeat/index",
     "pages/friend_shared/index" 
   ],
+  "permission": {
+    "scope.record": {
+      "desc": "用于录制音频，实现复读机/音频分享功能" 
+    }
+  },
   "tabBar": {
     "color": "#666",
     "selectedColor": "#07c160",
