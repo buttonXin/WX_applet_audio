@@ -92,6 +92,7 @@ Page({
     //   startedAtText: decodeURIComponent(options.startedAtText || '2025-1223-11%3A08'),
     //   fileID: decodeURIComponent(options.fileID || 'cloud%3A%2F%2Fcloud1-7gx2nui6c1ea95dc.636c-cloud1-7gx2nui6c1ea95dc-1391336846%2Faudios%2FolJSB1y7u_NO6gAM_EQS1HA2SbU8_20251222161726.mp3')
     // };
+    // console.log('sadasd= ', JSON.stringify(options));
     const receivedParams = {
       shareType: decodeURIComponent(options.shareType || ''),
       audioId: options.audioId || '',
@@ -132,7 +133,7 @@ Page({
       });
       return;
     } else {
-      console.log('接收到的分享类型:', shareType);
+      console.log('接收到的分享类型:', receivedParams.shareType);
     }
 
 
