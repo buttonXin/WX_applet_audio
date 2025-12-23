@@ -23,4 +23,35 @@
     </block>
   </view>
   <view class="empty" wx:else>暂无收藏</view>
+
+
+
+  <!-- 分享菜单弹窗 -->
+<view class="share-mask" wx:if="{{showShareMenu}}" bindtap="hideShareMenu">
+  <view class="share-menu" catchtap="">
+     <!-- 直接分享 - 使用 button -->
+     <button 
+      class="share-menu-item share-btn" 
+      open-type="share"
+      data-type="direct"
+      bindtap="onDirectShare"
+      data-action="direct"
+    >
+      <text>直接分享</text>
+    </button>
+    
+    <!-- 阅后即焚 - 使用 button -->
+    <button 
+      class="share-menu-item share-btn" 
+      open-type="share"
+      data-type="burnRead"
+      bindtap="onBurnReadShare"
+      data-action="burn"
+    >
+      <text>阅后即焚</text>
+    </button>
+    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听</view>
+  </view>
+</view>
+
 </view>

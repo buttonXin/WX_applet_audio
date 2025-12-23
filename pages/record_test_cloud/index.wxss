@@ -18,7 +18,6 @@
 .primary-ghost { color: #1abc8c; border: 1px solid #1abc8c; background: #f4fffa; }
 .info-ghost { color: #1f72c6; border: 1px solid #1f72c6; background: #f3f8ff; }
 .empty { display: block; margin-top: 16rpx; color: #9ab3a3; }
-.wx_check { margin-top: 10rpx; margin-bottom: 10rpx;text-align: center; font-size: 24rpx; color: #333; font-family: monospace; }
 .bottom-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 50rpx; width: calc(100% - 64rpx); display: flex; flex-direction: column; align-items: center; gap: 18rpx; }
 .timer { text-align: center; font-size: 48rpx; color: #0b5132; font-family: monospace; }
 .btn { width: 100%; border-radius: 50rpx; margin-bottom: 40rpx; padding: 20rpx;}
@@ -26,6 +25,7 @@
 .danger { background: #ff6b6b; color: #fff; border: none; }
 
 /* 分享菜单遮罩 */
+.wx_check { margin-top: 10rpx; margin-bottom: 10rpx;text-align: center; font-size: 24rpx; color: #333; font-family: monospace; }
 .share-mask {
   position: fixed;
   top: 0;
