@@ -82,7 +82,15 @@ Page({
   },
 
   onHide() {
+    
     if (this.player) this.player.pause();
+
+    // burn的情况下退出后就不显示 播放按钮了.
+    if(!this.data.showBurnButtons){
+      this.setData({
+        canShare: false // 不显示按钮
+      });
+    }
   },
 
   onLoad(options) {
