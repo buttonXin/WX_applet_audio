@@ -43,8 +43,9 @@ exports.main = async (event, context) => {
 
     if(burn === 3){
       return {
-        success: false,
+        success: true,
         msg: '当前分享已被其他用户抢先了',
+        code: 1000
       }
     }
 

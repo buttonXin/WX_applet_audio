@@ -58,6 +58,10 @@ Page({
   },
   
   onHide() {
+    // 防止刚授权时的报错
+    if (this.data.recording !== true) {
+      return;
+    }
     if (this.player) this.player.pause();
   },
 
