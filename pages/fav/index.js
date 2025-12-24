@@ -92,6 +92,10 @@ Page({
   },
   // ============ 更新lastRecord  end ============
 
+  onHide() {
+    if (this.player) this.player.pause();
+  },
+
   onPlay(e) {
     const item = this.findById(e.currentTarget.dataset.id);
     if (!item) return;
@@ -378,9 +382,9 @@ Page({
       pathIndex = '/pages/friend_shared/index?id=shaerd';
     }else{
       return {
-        title: '人类的本质是复读机-.-',
+        title: '人类的本质是复读机',
         path: '/pages/record_test_cloud/index', // 携带多个参数的路径
-        imageUrl: null, // 之前生成的图片作为封面
+        imageUrl: '/assets/share_img.png',  // 之前生成的图片作为封面
         // desc: '包含多个参数的复读机分享'
       };
     }
@@ -391,9 +395,9 @@ Page({
     console.log('分享数据:', sharePath);
     // 4. 返回分享配置
     return {
-      title: '人类的本质是复读机-.-',
+      title: '人类的本质是复读机',
       path: sharePath, // 携带多个参数的路径
-      imageUrl: null, // 之前生成的图片作为封面
+      imageUrl: '/assets/share_img.png',  // 之前生成的图片作为封面
       // desc: '包含多个参数的复读机分享'
     };
   },

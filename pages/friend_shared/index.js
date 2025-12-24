@@ -81,6 +81,10 @@ Page({
 
   },
 
+  onHide() {
+    if (this.player) this.player.pause();
+  },
+
   onLoad(options) {
     // 1. 解析参数（注意：微信会自动解码一层，需手动解码编码过的参数）
     // const receivedParams = {
@@ -184,88 +188,70 @@ Page({
 
   },
 
-   // 等待审核结果
-   async waitForCheckResult(audioId , openid ,fileID) {
-    console.log("audioid = " + audioId + ", openid = "+ openid)
-    const db = wx.cloud.database();
-  
-    // 查询待优化
-    wx.showLoading({ title: '查询审核状态...' });
-    try {
+  async waitForCheckResult(audioId , shareOpenid ,fileID) {
+    const { operatorOpenid } = this.data;
+    console.log("audioId= "+audioId+ ", shareOpenid="+shareOpenid+ ", operatorOpenid="+operatorOpenid);
+    wx.showLoading({ title: '处理中...' });
 
-       const res = await db.collection('audios').where({
-        _id: audioId,
-        _openid: openid
-      }).get();
-
-      wx.hideLoading();
-      
-      console.log('审核结果= ', JSON.stringify(res));
-
-      // 2. 核心修复：先判断数组是否有数据，再取第一个元素的 checkStatus
-      if (res.data.length === 0) {
-        wx.showModal({
-          title: '提示',
-          content: '未找到该音频记录',
-          showCancel: false
-        });
-        return;
+    // 调用云函数修改burn字段
+    wx.cloud.callFunction({
+      name: 'friendUpdateBurn',
+      data: {
+        audioId,
+        shareOpenid,
+        operatorOpenid
       }
-
-      // 3. 正确取值：从数组第一个元素中获取 checkStatus
-      const audioData = res.data[0]; // 取匹配的第一条数据
-      console.log('审核结果= ', JSON.stringify(audioData));
-
-      const status = audioData.checkStatus; 
-      const burn = audioData.burn; 
-      this.setData({checkStatus : status})
- 
-      console.log('审核结果= status =', status + ", burn = " + burn);
-
+    }).then(res => {
       this.setData({canShare : false})
-      // 其他用户已经使用
-      if(burn === 3){
-        wx.showModal({
-          title: '提示',
-          content: '当前分享已被其他用户抢先了',
-          showCancel: false
-        });
-        return;
-      }
-
-      // 4. 审核状态判断
-      if (status === 'pass') {
-        this.setData({canShare : true})
-        this.downloadAudioFromCloud(fileID , burn);
-      } else if (status === 'reject') {
-        wx.showToast({ 
-          title: '内容审核未通过', 
-          icon: 'none' 
-        });
-      } else {
-        // 处理审核中/其他状态
-        wx.showModal({
-          title: '提示',
-          content: '审核中，请稍后再试',
-          showCancel: false
-        });
-      }
-    } catch (err) {
-      console.error('查询失败：', err);
       wx.hideLoading();
-      wx.showModal({
-        title: '提示',
-        content: '查询审核状态失败，请稍后再试',
-        showCancel: false
-      });
-    }
+      if (res.result.success) {
+        this.setData({canShare : true})
+        console.log("uopdate  success" , JSON.stringify(res.result))
+        // 审核拒绝
+        if(res.result.code == 500){
+          this.setData({checkStatus : 'reject'})
+            wx.showModal({
+              title: '提示',
+              content: '内容审核未通过',
+              showCancel: false
+            });
+          return;
+        }
+        // 处理审核中
+        if(res.result.code == 300){
+          this.setData({checkStatus : 'pendding'})
+          
+            wx.showModal({
+              title: '提示',
+              content: '审核中，请稍后再试',
+              showCancel: false
+            });
+          return;
+        }
+        this.setData({checkStatus : 'pass'})
+        // 阅后即焚 修改完数据库了.
+        if(res.result.code == 201){
+          this.setData({displayString:getRandomString()});
+        }
+        // 正常的直接分享, / 阅后即焚, 开始下载音频
+        this.downloadAudioFromCloud(fileID);
+      } else {
+        console.log("uopdate  fail" , JSON.stringify(res.result))
+        wx.showToast({ title: res.result.msg, icon: 'none' });
+      }
+    }).catch(err => {
+      wx.hideLoading();
+      console.error('调用云函数失败：', err);
+      wx.showToast({ title: '操作失败', icon: 'none' });
+    });
+
   },
 
   /**
  * 从云存储下载音频文件（fileID → 临时文件路径）
  * @param {string} fileID 云存储文件ID
  */
-  async downloadAudioFromCloud(fileID , burn) {
+  async downloadAudioFromCloud(fileID ) {
     if (!fileID) {
       wx.showToast({ title: '无音频文件ID', icon: 'none' });
       return;
@@ -282,13 +268,10 @@ Page({
       if (res.statusCode === 200) {
         console.log("audio path = "+ res.tempFilePath)
         this.withTempAudioPath(this.data.lastRecord , res.tempFilePath);
-        // wx.showToast({ title: '音频下载成功', icon: 'success' });
+        wx.showToast({ title: '音频下载成功', icon: 'success' });
 
-        // 获取成功后, 云函数修改数据库
-        if(burn === 2){
-          this.updateAudioBurn();
-        }
-
+      }else{
+        wx.showToast({ title: '音频下code不是200', icon: 'none' });
       }
     } catch (err) {
       console.error('音频下载失败：', err);
@@ -297,38 +280,7 @@ Page({
       wx.hideLoading();
     }
   },
-  // 更新字段
-  updateAudioBurn() {
-    const { lastRecord, operatorOpenid } = this.data;
 
-    const audioId = lastRecord.audioId;
-    const shareOpenid = lastRecord.openid;
-    console.log("audioId= "+audioId+ ", shareOpenid="+shareOpenid+ ", operatorOpenid="+operatorOpenid);
-    wx.showLoading({ title: '处理中...' });
-
-    // 调用云函数修改burn字段
-    wx.cloud.callFunction({
-      name: 'friendUpdateBurn',
-      data: {
-        audioId,
-        shareOpenid,
-        operatorOpenid
-      }
-    }).then(res => {
-      wx.hideLoading();
-      if (res.result.success) {
-        console.log("uopdate  success" , res.result.msg)
-        this.setData({displayString:getRandomString()});
-      } else {
-        console.log("uopdate  fail" , res.result.msg)
-        wx.showToast({ title: res.result.msg, icon: 'none' });
-      }
-    }).catch(err => {
-      wx.hideLoading();
-      console.error('调用云函数失败：', err);
-      wx.showToast({ title: '操作失败', icon: 'none' });
-    });
-  },
 
   withStartText(rec) {
     const startedAtText = rec.startedAtText || (rec.startedAt ? fmtStart(rec.startedAt) : '--');
@@ -392,24 +344,6 @@ Page({
     console.log(  "last = " , JSON.stringify(last))
   },
 
-   // 更新阅后即焚状态
-   async updateBurnReadStatus() {
-    const { audioId } = this.data;
-    if (!shareAudioId) return;
-    
-    try {
-      const db = wx.cloud.database();
-      await db.collection('audios').doc(audioId).update({
-        data: {
-          burnRead: true,
-          isPlayed: false
-        }
-      });
-      console.log('已标记为阅后即焚');
-    } catch (err) {
-      console.error('更新失败:', err);
-    }
-  },
 
   async onShare() {
     const { shareType, checkStatus } = this.data;
@@ -429,9 +363,9 @@ Page({
     if (!canShare || shareType === 'burn') {
       console.log("111")
       return {
-        title: '人类的本质是复读机-.-',
+        title: '人类的本质是复读机',
         path: '/pages/record_test_cloud/index', // 携带多个参数的路径
-        imageUrl: null, // 之前生成的图片作为封面
+        imageUrl: '/assets/share_img.png',  // 之前生成的图片作为封面
         // desc: '包含多个参数的复读机分享'
       };
       
@@ -460,9 +394,9 @@ Page({
       console.log('分享数据:', sharePath);
       // 4. 返回分享配置
       return {
-        title: '人类的本质是复读机-.-',
+        title: '人类的本质是复读机',
         path: sharePath, // 携带多个参数的路径
-        imageUrl: null, // 之前生成的图片作为封面
+        imageUrl: '/assets/share_img.png',  // 之前生成的图片作为封面
         // desc: '包含多个参数的复读机分享'
       };
     }
