@@ -448,7 +448,7 @@ Page({
         return {
           title: '人类的本质是复读机',
           path: '/pages/record_test_cloud/index', // 携带多个参数的路径
-          imageUrl: '/assets/share_img.png', // 之前生成的图片作为封面
+          imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
           // desc: '包含多个参数的复读机分享'
         };
       }
@@ -459,7 +459,7 @@ Page({
       return {
         title: '人类的本质是复读机',
         path: sharePath, // 携带多个参数的路径
-        imageUrl: '/assets/share_img.png',  // 之前生成的图片作为封面
+        imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
         // desc: '包含多个参数的复读机分享'
       };
     }
