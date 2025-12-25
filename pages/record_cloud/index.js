@@ -66,6 +66,7 @@ Page({
   },
   
   onHide() {
+    this.setData({ isFullScreen: false });
     // 防止刚授权时的报错
     if (this.data.recording !== true) {
       return;

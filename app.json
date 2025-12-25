@@ -21,5 +21,7 @@
       { "pagePath": "pages/friend_shared/index", "text": "朋友分享", "iconPath": "assets/me.png", "selectedIconPath": "assets/me_on.png" }
     ]
   },
+  
+  "lazyCodeLoading": "requiredComponents", 
   "window": { "navigationBarTitleText": "录音器" }
 }
