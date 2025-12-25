@@ -1,6 +1,6 @@
 {
   "pages": [
-    "pages/record_test_cloud/index",
+    "pages/record_cloud/index",
     "pages/fav/index",
     "pages/repeat/index",
     "pages/friend_shared/index" 
@@ -15,7 +15,7 @@
     "selectedColor": "#07c160",
     "borderStyle": "black",
     "list": [
-      { "pagePath": "pages/record_test_cloud/index", "text": "录音", "iconPath": "assets/rec.png", "selectedIconPath": "assets/rec_on.png" },
+      { "pagePath": "pages/record_cloud/index", "text": "录音", "iconPath": "assets/rec.png", "selectedIconPath": "assets/rec_on.png" },
       { "pagePath": "pages/fav/index", "text": "收藏", "iconPath": "assets/fav.png", "selectedIconPath": "assets/fav_on.png" },
       { "pagePath": "pages/repeat/index", "text": "复读机", "iconPath": "assets/repeat.png", "selectedIconPath": "assets/repeat_on.png" },
       { "pagePath": "pages/friend_shared/index", "text": "朋友分享", "iconPath": "assets/me.png", "selectedIconPath": "assets/me_on.png" }

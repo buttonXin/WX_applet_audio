@@ -10,6 +10,7 @@
 .card-row { display: flex; align-items: center; gap: 16rpx; }
 .card-info { flex: 1; }
 .card-title { font-size: 32rpx; font-weight: 600; color: #0b5132; }
+.title-hover {background: rgba(0, 0, 0, 0.05);border-radius: 8rpx;}
 .card-meta { margin-top: 6rpx; color: #6f8a7b; font-size: 26rpx; }
 .card-time { margin-top: 4rpx; color: #7c9087; font-size: 24rpx; }
 .play-btn { min-width: 170rpx; height: 72rpx; line-height: 72rpx; border-radius: 14rpx; }

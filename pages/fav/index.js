@@ -21,6 +21,7 @@ Page({
   data: { 
     list: [] ,
     lastRecord: null,
+    maxNameLength: 50, // 名字最大长度
   },
 
   onShow() { this.refresh(); },
@@ -105,6 +106,7 @@ Page({
 
   onRename(e) {
     const item = this.findById(e.currentTarget.dataset.id);
+    const maxNameLength = this.data.maxNameLength;
     if (!item) return;
     wx.showModal({
       title: '重命名',
@@ -112,7 +114,16 @@ Page({
       placeholderText: item.name,
       success: res => {
         if (res.confirm && res.content) {
-          const list = this.data.list.map(i => i.id === item.id ? { ...i, name: res.content } : i);
+          let newName = res.content.trim()
+          // 限制长度
+          if (newName.length > maxNameLength) {
+            newName = newName.substring(0, maxNameLength)
+            wx.showToast({ 
+              title: `名称已截取为${maxNameLength}字`, 
+              icon: 'none' 
+            })
+          }
+          const list = this.data.list.map(i => i.id === item.id ? { ...i, name: newName } : i);
           wx.setStorageSync('favList', list);
           this.setData({ list });
         }

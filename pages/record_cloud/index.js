@@ -52,6 +52,7 @@ Page({
     startAt: null,
     playing: false,
     userInfo: null,
+    maxNameLength: 50, // 名字最大长度
 
     showShareMenu: false,
 
@@ -302,6 +303,7 @@ Page({
   
   onRenameLast() {
     const last = this.data.lastRecord;
+    const maxNameLength = this.data.maxNameLength;
     if (!last) return;
     wx.showModal({
       title: '重命名',
@@ -309,12 +311,33 @@ Page({
       placeholderText: last.name,
       success: res => {
         if (res.confirm && res.content) {
-          const updated = this.withStartText({ ...last, name: res.content });
+          let newName = res.content.trim()
+          // 限制长度
+          if (newName.length > maxNameLength) {
+            newName = newName.substring(0, maxNameLength)
+            wx.showToast({ 
+              title: `名称已截取为${maxNameLength}字`, 
+              icon: 'none' 
+            })
+          }
+          const updated = this.withStartText({ ...last, name: newName });
           wx.setStorageSync('lastRecord', updated);
           this.setData({ lastRecord: updated });
         }
       }
     });
+  },
+
+  // 长按复制名称
+  onLongPressName() {
+    const { lastRecord } = this.data
+    if (!lastRecord || !lastRecord.name) return
+    wx.setClipboardData({
+      data: lastRecord.name,
+      success: () => {
+        wx.showToast({ title: '已复制', icon: 'success' })
+      }
+    })
   },
   
   onSave() {

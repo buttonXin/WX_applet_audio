@@ -66,6 +66,7 @@ Page({
     userInfo: null,
     // 初始化时获取一个随机字符串
     displayString: '',
+    maxNameLength: 50, // 名字最大长度
 
     operatorOpenid: '',   // 当前用户的openid
     showBurnButtons: true, //   是否显示底部的按钮
@@ -327,6 +328,7 @@ Page({
 
   onRenameLast() {
     const last = this.data.lastRecord;
+    const maxNameLength = this.data.maxNameLength;
     if (!last) return;
     wx.showModal({
       title: '重命名',
@@ -334,13 +336,32 @@ Page({
       placeholderText: last.name,
       success: res => {
         if (res.confirm && res.content) {
-          const updated = this.withStartText({ ...last, name: res.content });
-          wx.setStorageSync('lastRecord', updated);
+          let newName = res.content.trim()
+          // 限制长度
+          if (newName.length > maxNameLength) {
+            newName = newName.substring(0, maxNameLength)
+            wx.showToast({ 
+              title: `名称已截取为${maxNameLength}字`, 
+              icon: 'none' 
+            })
+          }
+          const updated = this.withStartText({ ...last, name: newName });
           this.setData({ lastRecord: updated });
         }
       }
     });
   },
+    // 长按复制名称
+    onLongPressName() {
+      const { lastRecord } = this.data
+      if (!lastRecord || !lastRecord.name) return
+      wx.setClipboardData({
+        data: lastRecord.name,
+        success: () => {
+          wx.showToast({ title: '已复制', icon: 'success' })
+        }
+      })
+    },
   
   onSave() {
     const last = this.data.lastRecord;
@@ -361,11 +382,10 @@ Page({
 
    // 分享回调
    onShareAppMessage: function() {
-    const { canShare, shareType, audioId, openid, lastRecord } = this.data;
+    const { canShare, shareType, lastRecord } = this.data;
  
     console.log("分享数据" , JSON.stringify(lastRecord) 
-    + " , shareType= " + shareType + ", audioId=" + audioId + ", openid=" + openid 
-    + ", canShare=" + canShare )
+    + " , shareType= " + shareType + ", canShare=" + canShare )
 
     // 拦截分享（返回空对象则分享面板不会弹出）
     if (!canShare || shareType === 'burn') {
@@ -385,19 +405,23 @@ Page({
         duration: encodeURIComponent(lastRecord.duration),
         startedAtText: encodeURIComponent(lastRecord.startedAtText),
         fileID: encodeURIComponent(lastRecord.fileID),
-        audioId: encodeURIComponent(audioId),
-        openid: encodeURIComponent(openid),
+        audioId: encodeURIComponent(lastRecord.audioId),
+        openid: encodeURIComponent(lastRecord.openid),
       };
 
-      // 3. 拼接分享路径（多个参数用 & 连接）
-      const sharePath = `/pages/friend_shared/index?id=shaerd
-      &shareType=${encodedParams.shareType}
-      &audioId=${encodedParams.audioId}
-      &openid=${encodedParams.openid}
-      &name=${encodedParams.name}
-      &duration=${encodedParams.duration}
-      &startedAtText=${encodedParams.startedAtText}
-      &fileID=${encodedParams.fileID}`;
+            // 3. 拼接分享路径（多个参数用 & 连接）
+      let pathIndex = '' ; 
+      if(shareType === 'direct'){
+        pathIndex = '/pages/friend_shared/index?id=shaerd';
+      }else{
+        return {
+          title: '人类的本质是复读机',
+          path: '/pages/record_test_cloud/index', // 携带多个参数的路径
+          imageUrl: '/assets/share_img.png', // 之前生成的图片作为封面
+          // desc: '包含多个参数的复读机分享'
+        };
+      }
+      const sharePath = `${pathIndex}&shareType=${encodedParams.shareType}&audioId=${encodedParams.audioId}&openid=${encodedParams.openid}&name=${encodedParams.name}&duration=${encodedParams.duration}&startedAtText=${encodedParams.startedAtText}&fileID=${encodedParams.fileID}`;
 
       console.log('分享数据:', sharePath);
       // 4. 返回分享配置

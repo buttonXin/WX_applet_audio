@@ -5,7 +5,7 @@
   
   <view class="header">
     <text class="title">复读机</text>
-    <text class="subtitle">选择录音并循环/变速播放</text>
+    <text class="subtitle">选择 收藏 的录音, 循环/变速播放</text>
   </view>
 
   <picker mode="selector" range="{{recordNames}}" bindchange="onPick">

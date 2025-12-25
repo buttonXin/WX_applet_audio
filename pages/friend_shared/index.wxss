@@ -61,6 +61,7 @@
   color: #333;
   margin-bottom: 12rpx;
 }
+.title-hover {background: rgba(0, 0, 0, 0.05);border-radius: 8rpx;}
 
 .card-meta {
   font-size: 26rpx;
