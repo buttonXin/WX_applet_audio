@@ -17,12 +17,60 @@ Page({
     pointB: null
   },
   onShow() { this.loadFavs(); },
-  onUnload() { audio.stop(); },
+  onUnload() {
+    audio.stop();
+     // 重置页面数据到初始状态
+  this.setData({
+    playing: false,
+    currentTime: '00:00',
+    duration: '00:00',
+  });
+  },
+  onHide() {
+      // 停止音频播放并重置音频上下文
+  audio.stop();
+  
+  // 重置页面数据到初始状态
+  this.setData({
+    playing: false,
+    currentTime: '00:00',
+    duration: '00:00',
+  });
+  },
+
   loadFavs() {
     const list = wx.getStorageSync('favList') || [];
+    const size = list.length;
+    console.log("list = "+ size)
+    if(size===0){
+      wx.showModal({
+        title: '提示',
+        content: '请先收藏后，再选择复读机！',
+        showCancel: false,
+        confirmText: '确认', 
+        success(res) {
+          // 用户点击确认按钮后的回调
+          if (res.confirm) {
+            console.log('用户点击了确认');
+            wx.reLaunch({
+              url: '/pages/record_cloud/index', // 替换为你的首页路径
+              success() {
+                console.log('已跳转到首页');
+              },
+              fail(err) {
+                console.error('跳转失败:', err);
+              }
+            });
+          }
+        },
+      });
+    }
     this.setData({ list, recordNames: list.map(i => i.name) });
   },
+
   onPick(e) {
+    const size = this.data.list.length;
+    console.log("list = "+ size)
     const idx = Number(e.detail.value);
     const item = this.data.list[idx];
     if (!item) return;

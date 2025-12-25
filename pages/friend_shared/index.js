@@ -132,7 +132,7 @@ Page({
           if (res.confirm) {
             console.log('用户点击了确认');
             wx.reLaunch({
-              url: '/pages/record_test_cloud/index', // 替换为你的首页路径
+              url: '/pages/record_cloud/index', // 替换为你的首页路径
               success() {
                 console.log('已跳转到首页');
               },
@@ -231,7 +231,7 @@ Page({
                 if (res.confirm) {
                   console.log('用户点击了确认');
                   wx.reLaunch({
-                    url: '/pages/record_test_cloud/index', // 替换为你的首页路径
+                    url: '/pages/record_cloud/index', // 替换为你的首页路径
                     success() {
                       console.log('已跳转到首页');
                     },
