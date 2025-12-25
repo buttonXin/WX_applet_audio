@@ -88,8 +88,10 @@ Page({
 
     // burn的情况下退出后就不显示 播放按钮了.
     if(!this.data.showBurnButtons){
+
       this.setData({
-        canShare: false // 不显示按钮
+        canShare: false, // 不显示按钮
+        displayString:'已经被焚毁了！'
       });
     }
   },
@@ -214,8 +216,37 @@ Page({
       this.setData({canShare : false})
       wx.hideLoading();
       if (res.result.success) {
-        this.setData({canShare : true})
         console.log("uopdate  success" , JSON.stringify(res.result))
+        // 已被抢先
+        if(res.result.code == 1000){
+          this.setData({checkStatus : 'pass'})
+            wx.showModal({
+              title: '提示',
+              content: '当前分享已被其他用户抢先了',
+              showCancel: false,
+              confirmText: '确认', // 确认按钮文字
+              // confirmColor: '#007AFF', // 确认按钮颜色 (可选)
+              success(res) {
+                // 用户点击确认按钮后的回调
+                if (res.confirm) {
+                  console.log('用户点击了确认');
+                  wx.reLaunch({
+                    url: '/pages/record_test_cloud/index', // 替换为你的首页路径
+                    success() {
+                      console.log('已跳转到首页');
+                    },
+                    fail(err) {
+                      console.error('跳转失败:', err);
+                    }
+                  });
+                }
+              },
+            });
+          return;
+        }
+
+        this.setData({canShare : true})
+        
         // 审核拒绝
         if(res.result.code == 500){
           this.setData({checkStatus : 'reject'})

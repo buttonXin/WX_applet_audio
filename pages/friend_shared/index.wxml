@@ -16,15 +16,16 @@
       checkStatus === 'pass' ? '' : 
       checkStatus === 'reject' ? '审核未通过!' :''}}
   </text>
+
     <view class="card" wx:if="{{lastRecord}}">
       <view class="card-row">
         <view class="card-info">
           <view  class="card-title" 
                 bindlongpress="onLongPressName"
                 hover-class="title-hover"
-          >{{lastRecord.name || '未命名'}}</view>
-          <view class="card-meta">时长：{{lastRecord.duration}} 秒</view>
-          <view class="card-time">时间：{{lastRecord.startedAtText || '--'}}</view>
+          >{{canShare ? lastRecord.name : ''}}</view>
+          <view class="card-meta">时长：{{canShare ? (lastRecord.duration || 0) + ' 秒' : '0 秒'}}</view>
+      <view class="card-time">时间：{{canShare ? lastRecord.startedAtText : '--'}}</view>
         </view>
         <button class="play-btn" type="primary" bindtap="onTogglePlay" wx:if="{{canShare}}">{{playing ? '停止' : '播放'}}</button>
       </view>
