@@ -2,10 +2,17 @@
   <view class="top">
     <text class="slogan">人类的本质是复读机-.-</text>
     <view class="hero">
-      <text class="title">开始录音</text>
+      <text class="title" bindtap="onTitleClick" >开始录音</text>
       <text class="subtitle">{{recording ? '录音中...' : '点击开始录音'}}</text>
     </view>
   </view>
+
+  <!-- 开发者才能显示 -->
+  <button class="selectimg" bindtap="chooseImg" wx:if="{{isDeveloper}}">选图片</button>
+  <view class="full-screen-img" wx:if="{{isFullScreen}}">
+  <image src="{{selectedImg}}" mode="widthFix"></image>
+  </view>
+
 
   <view class="last">
     <text class="label">上次录音</text>

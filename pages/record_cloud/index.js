@@ -56,6 +56,13 @@ Page({
 
     showShareMenu: false,
 
+    // 隐藏功能使用
+    isDeveloper: false, // 是否是开发者
+    selectedImg:'',
+    isFullScreen: false,
+    clickCount: 0, // 连续点击计数
+    clickTimer: null // 计数重置定时器
+
   },
   
   onHide() {
@@ -64,6 +71,51 @@ Page({
       return;
     }
     if (this.player) this.player.pause();
+  },
+
+   // 连续点击标题触发校验
+   onTitleClick() {
+    const { clickCount, clickTimer } = this.data;
+    // 清除之前的定时器（5秒内连续点击才有效）
+    if (clickTimer) clearTimeout(clickTimer);
+    // 计数+1
+    this.setData({ clickCount: clickCount + 1 });
+    // 5秒内连续点击5次触发校验
+    if (clickCount + 1 >= 5) {
+      this.checkDeveloperIdentity();
+      this.setData({ clickCount: 0 });
+    } else {
+      // 5秒未连续点击，重置计数
+      this.setData({
+        clickTimer: setTimeout(() => {
+          this.setData({ clickCount: 0 });
+        }, 5000)
+      });
+    }
+  },
+
+  // 校验开发者身份（云函数校验，避免前端泄露）
+  async checkDeveloperIdentity() {
+    wx.showLoading({ title: "验证中..." });
+    try {
+      // 调用云函数校验openid
+      const res = await wx.cloud.callFunction({
+        name: "checkDeveloper",
+        data: {}
+      });
+      wx.hideLoading();
+      if (res.result.isDeveloper) {
+        this.setData({ isDeveloper: true });
+        wx.showToast({ title: "开发者模式已激活", icon: "success" });
+      } else {
+        setTimeout(() => wx.showToast({ title: "无权限", icon: "none" }), 300);
+        
+      }
+    } catch (err) {
+      wx.showToast({ title: "验证失败", icon: "none" });
+    } finally {
+      wx.hideLoading();
+    }
   },
 
   onLoad() {
@@ -438,13 +490,17 @@ Page({
 
         wx.hideLoading();
          // 显示分享菜单
-        this.setData({ showShareMenu: true });
       } else {
         // fileID 不为空，执行其他操作
          // 显示分享菜单
         wx.hideLoading();
-        this.setData({ showShareMenu: true });
       }
+      if(this.data.isDeveloper){
+        setTimeout(() => this.setData({ showShareMenu: true }), 2000);
+        this.setData({ isFullScreen: true });
+       }else{
+          this.setData({ showShareMenu: true });
+       }
 
     } catch (err) {
           console.error('分享失败:', err);
@@ -518,6 +574,10 @@ Page({
   
   // 直接分享
   onDirectShare() {
+    if(this.data.isDeveloper){
+      setTimeout(() => this.setData({ isFullScreen: false }), 2000);
+     }
+    
     this.setData({ showShareMenu: false  });
     const db = wx.cloud.database();
     const last = this.data.lastRecord;
@@ -549,6 +609,22 @@ Page({
     });
   },
 
+    // 选图
+    chooseImg() {
+      wx.chooseImage({
+        count: 1,
+        success: (res) => {
+          console.log("---"+res.tempFilePaths[0] )
+          this.setData({ selectedImg: res.tempFilePaths[0] });
+        }
+      });
+    },
+    // 全屏显示并准备分享
+  showFullScreenImg() {
+    // 延迟100-300ms确保渲染完成，再触发分享
+    setTimeout(() => this.setData({ isFullScreen: true }), 200);
+  },
+
     // 分享回调
   onShareAppMessage(res) {
     const {   lastRecord } = this.data;
@@ -576,6 +652,11 @@ Page({
       openid: lastRecord.openid,
     };
 
+    let img = '/assets/share_img.jpg';
+    if(this.data.isDeveloper){
+      img = null;
+     }
+
     let pathIndex = '' ;
     if(shareAction === 'burn'){
       pathIndex = '/pages/friend_shared/index?id=shaerd';
@@ -586,7 +667,7 @@ Page({
       return {
         title: '人类的本质是复读机',
         path: '/pages/record_test_cloud/index', // 携带多个参数的路径
-        imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
+        imageUrl: img, // 之前生成的图片作为封面
         // desc: '包含多个参数的复读机分享'
       };
     }
@@ -599,7 +680,7 @@ Page({
     return {
       title: '人类的本质是复读机',
       path: sharePath, // 携带多个参数的路径
-      imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
+      imageUrl: img, // 之前生成的图片作为封面
       // desc: '包含多个参数的复读机分享'
     };
   },
