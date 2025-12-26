@@ -1,5 +1,6 @@
 <view class="burn-page">
 
+  <text class="switch-label">后续开放超过多长时间后，分享的内容也无法查看。</text>
 
 
   <view class="burn-body"></view> <!-- 用来撑开剩余空间 -->

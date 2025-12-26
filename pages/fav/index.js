@@ -386,8 +386,10 @@ Page({
     };
 
     let pathIndex = '' ;
+    let tempTitle = '人类的本质是复读机';
     if(shareAction === 'burn'){
       pathIndex = '/pages/friend_shared/index?id=shaerd';
+      tempTitle = '分享内容是 阅后即焚';
     }else 
     if(shareAction === 'direct'){
       pathIndex = '/pages/friend_shared/index?id=shaerd';
@@ -406,7 +408,7 @@ Page({
     console.log('分享数据:', sharePath);
     // 4. 返回分享配置
     return {
-      title: '人类的本质是复读机',
+      title: tempTitle,
       path: sharePath, // 携带多个参数的路径
       imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
       // desc: '包含多个参数的复读机分享'
