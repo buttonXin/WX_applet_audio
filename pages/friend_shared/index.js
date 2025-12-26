@@ -170,7 +170,8 @@ Page({
     // 3. 赋值到页面数据，用于渲染
     const lastRecord = this.withStartText({
       id: Date.now(),
-      name: receivedParams?.name || '新录音',
+      // name: receivedParams?.name || '新录音',
+      name: '收到分享',
       duration: receivedParams.duration,
       path: '',
       startedAtText:receivedParams.startedAtText,
