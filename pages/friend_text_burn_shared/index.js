@@ -9,7 +9,7 @@ Page({
   onLoad(options) {
     // 1. 接收分享传入的 uuid 参数（分享链接中携带的参数）
     const { uuid , text_butn_time } = options;
-    const time = decodeURIComponent(text_butn_time)
+    const time = text_butn_time
     console.log("optuions = ", JSON.stringify(options))
     if (!uuid) {
       this.setData({

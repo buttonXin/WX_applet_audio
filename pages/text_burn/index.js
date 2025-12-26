@@ -159,7 +159,7 @@ Page({
 
     this.setData({ shareText: ''});
    
-    const time = '阅后即焚: ' + encodeURIComponent(fmtStart(Date.now()))  ;
+    const time = '阅后即焚: ' + fmtStart(Date.now())  ;
     return {
       title: time,
       path: '/pages/friend_text_burn_shared/index?uuid=' + textID + "&text_butn_time=" + time, // 携带多个参数的路径
