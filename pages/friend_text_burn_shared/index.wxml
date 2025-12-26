@@ -1,5 +1,9 @@
 <view class="container">
-  <!-- 中间展示云函数返回的数据 -->
+  <!-- 展示时间 -->
+  <view class="top">
+    <text class="slogan">{{text_butn_time}}</text>
+  </view>
+
   <view class="content-wrap">
     <!-- 加载中状态 -->
     <view class="loading" wx:if="{{loading}}">

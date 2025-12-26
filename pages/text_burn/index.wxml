@@ -19,7 +19,7 @@
     </view>
     <button type="primary"
             open-type="share"
-            class="burn-btn {{shareText ? '' : 'btn-hidden'}}"
+            class="burn-btn {{ canShare &&shareText ? '' : 'btn-hidden'}}"
             disabled="{{!shareText}}"
             bindtap="onShare">分享</button>
   </view>

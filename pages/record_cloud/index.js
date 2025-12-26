@@ -2,9 +2,9 @@ const app = getApp();
 const recorder = wx.getRecorderManager();
 const player = wx.createInnerAudioContext();
 
-// 将duration改为20000毫秒（20秒）
-const MAX_DURATION = 20000; // 最大录制时长20秒
-const MAX_SHARE_COUNT = 100; // 每天最大分享次数
+// 将duration改为30000毫秒（30秒）
+const MAX_DURATION = 30000; // 最大录制时长30秒
+const MAX_SHARE_COUNT = 10; // 每天最大分享次数
 
 const recOptions = { 
   duration: MAX_DURATION, // 录音最大时长
@@ -120,6 +120,15 @@ Page({
   },
 
   onLoad() {
+
+    // 打开首页，如果是 burn 就直接跳转到text burn page
+    const text_burn = wx.getStorageSync('text_burn');
+    console.log("text_burn= " + text_burn);
+    if(text_burn === true){
+      
+      wx.navigateTo({ url: '/pages/text_burn/index' });
+    }
+
     const last = wx.getStorageSync('lastRecord');
     const userInfo = wx.getStorageSync('userInfo') || app.globalData?.userInfo || null;
     if (last) this.setData({ lastRecord: this.withStartText(last) });
@@ -223,7 +232,8 @@ Page({
   canShare() {
     return this.getTodayShareCount() < MAX_SHARE_COUNT;
   },
-  
+  // ============ 分享次数管理 end ============
+
   withStartText(rec) {
     const startedAtText = rec.startedAtText || (rec.startedAt ? fmtStart(rec.startedAt) : '--');
     return { ...rec, startedAtText };
@@ -667,7 +677,7 @@ Page({
     }else{
       return {
         title: '人类的本质是复读机',
-        path: '/pages/record_test_cloud/index', // 携带多个参数的路径
+        path: '/pages/record_cloud/index', // 携带多个参数的路径
         imageUrl: img, // 之前生成的图片作为封面
         // desc: '包含多个参数的复读机分享'
       };

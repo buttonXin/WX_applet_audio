@@ -15,15 +15,17 @@ async function checkTextBurn(uuid){
     const res = await db.collection('textBurn').where({
       uuid: uuid,
     }).get();
+    // console.log('11111 = ', JSON.stringify(res) + ' , size='+res.data.length)
      // 3. 检查查询结果：找不到则主动抛出错误
      if (res.data.length === 0) {
+      // console.log('2222 = ', JSON.stringify(res) + ' , size='+res.data.length)
       return {
-        success: true,
+        success: false,
         msg: '分享已销毁!',
-        error: err.message
+        code: 1000
       };
     }
-
+    // console.log('3333 = ', JSON.stringify(res) + ' , size='+res.data.length)
     // 4. 提取 text 字段（取第一条匹配数据，uuid 应唯一）
     const targetData = res.data[0];
     const text = targetData.text; // 提取 text 字段
