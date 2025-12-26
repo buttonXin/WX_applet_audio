@@ -1,0 +1,26 @@
+<view class="burn-page">
+
+
+
+  <view class="burn-body"></view> <!-- 用来撑开剩余空间 -->
+  <view class="burn-bottom">
+    <!-- pages/index/index.wxml -->
+    <view class="input-container">
+      <textarea
+        class="burn-input"
+        placeholder="输入内容后分享"
+        value="{{shareText}}"
+        bindinput="handleInput"
+        bindblur="handleBlur"
+        maxlength="{{maxInputLength}}" 
+        auto-height="{{true}}" 
+        show-count="{{false}}" 
+      />
+    </view>
+    <button type="primary"
+            open-type="share"
+            class="burn-btn {{shareText ? '' : 'btn-hidden'}}"
+            disabled="{{!shareText}}"
+            bindtap="onShare">分享</button>
+  </view>
+</view>

@@ -24,6 +24,23 @@ App({
       console.log('cloud init success.')
     }
 
+    const text_burn = wx.getStorageSync('text_burn');
+    console.log("text_burn="+text_burn);
+    if(text_burn === true){
+      wx.navigateTo({ url: '/pages/text_burn/index' });
+      // 跳转到指定页面，会关闭当前页面。
+      // wx.redirectTo({
+      //   url: '/pages/text_burn/index', // 假设这是引导页
+      //   success: () => {
+      //     console.log('已跳转到引导页');
+      //   },
+      //   fail: (err) => {
+      //     console.error('跳转失败:', err);
+      //   }
+      // });
+
+    }
+
   },
   globalData: {
     userInfo: null

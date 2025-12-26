@@ -4,7 +4,7 @@ const player = wx.createInnerAudioContext();
 
 // 将duration改为20000毫秒（20秒）
 const MAX_DURATION = 20000; // 最大录制时长20秒
-const MAX_SHARE_COUNT = 10; // 每天最大分享次数
+const MAX_SHARE_COUNT = 100; // 每天最大分享次数
 
 const recOptions = { 
   duration: MAX_DURATION, // 录音最大时长
@@ -386,16 +386,16 @@ Page({
   },
 
   // 长按复制名称
-  onLongPressName() {
-    const { lastRecord } = this.data
-    if (!lastRecord || !lastRecord.name) return
-    wx.setClipboardData({
-      data: lastRecord.name,
-      success: () => {
-        wx.showToast({ title: '已复制', icon: 'success' })
-      }
-    })
-  },
+  // onLongPressName() {
+  //   const { lastRecord } = this.data
+  //   if (!lastRecord || !lastRecord.name) return
+  //   wx.setClipboardData({
+  //     data: lastRecord.name,
+  //     success: () => {
+  //       wx.showToast({ title: '已复制', icon: 'success' })
+  //     }
+  //   })
+  // },
   
   onSave() {
     const last = this.data.lastRecord;

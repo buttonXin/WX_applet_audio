@@ -68,7 +68,6 @@ Page({
     displayString: '',
     maxNameLength: 50, // 名字最大长度
 
-    operatorOpenid: '',   // 当前用户的openid
     showBurnButtons: true, //   是否显示底部的按钮
     
     // 分享相关
@@ -181,13 +180,6 @@ Page({
     });
     this.setData({ lastRecord: lastRecord });
 
-    wx.cloud.callFunction({
-      name: 'getOpenId' // 通用获取openid的云函数（需提前创建）
-    }).then(res => {
-      this.setData({ operatorOpenid: res.result.openid });
-      console.log('获取openid = ' + this.data.operatorOpenid);
-    });
-
      // 等待审核
     wx.showLoading({ title: '查询审核结果...', mask: true });
     this.waitForCheckResult(receivedParams.audioId, receivedParams.openid, receivedParams.fileID);
@@ -201,10 +193,11 @@ Page({
   },
 
   async waitForCheckResult(audioId , shareOpenid ,fileID) {
-    const { operatorOpenid } = this.data;
-    console.log("audioId= "+audioId+ ", shareOpenid="+shareOpenid+ ", operatorOpenid="+operatorOpenid);
+
+    console.log("audioId= "+audioId+ ", shareOpenid="+shareOpenid);
     wx.showLoading({ title: '处理中...' });
 
+    const operatorOpenid = '';
     // 调用云函数修改burn字段
     wx.cloud.callFunction({
       name: 'friendUpdateBurn',
@@ -245,8 +238,6 @@ Page({
             });
           return;
         }
-
-        this.setData({canShare : true})
         
         // 审核拒绝
         if(res.result.code == 500){
@@ -254,21 +245,66 @@ Page({
             wx.showModal({
               title: '提示',
               content: '内容审核未通过',
-              showCancel: false
+              confirmText: '确认', // 确认按钮文字
+              // confirmColor: '#007AFF', // 确认按钮颜色 (可选)
+              success(res) {
+                // 用户点击确认按钮后的回调
+                if (res.confirm) {
+                  console.log('用户点击了确认');
+                  wx.reLaunch({
+                    url: '/pages/record_cloud/index', // 替换为你的首页路径
+                    success() {
+                      console.log('已跳转到首页');
+                    },
+                    fail(err) {
+                      console.error('跳转失败:', err);
+                    }
+                  });
+                }
+              },
             });
           return;
         }
         // 处理审核中
         if(res.result.code == 300){
           this.setData({checkStatus : 'pendding'})
-          
-            wx.showModal({
-              title: '提示',
-              content: '审核中，请稍后再试',
-              showCancel: false
-            });
+          // 显示包含“去首页”和“重试”按钮的模态框
+          wx.showModal({
+            title: '提示',
+            content: '正在审核中',
+            confirmText: '重试',
+            cancelText: '去首页',
+            success: (modalRes) => {
+              if (modalRes.confirm) {
+                // 用户点击了“重试”
+                console.log('用户点击了重试');
+                this.waitForCheckResult(audioId, shareOpenid, fileID);
+              } else if (modalRes.cancel) {
+                // 用户点击了“去首页”
+                console.log('用户点击了去首页');
+                // 跳转到首页
+                wx.reLaunch({
+                  url: '/pages/record_cloud/index', // 替换为你的首页路径
+                  success() {
+                    console.log('已跳转到首页');
+                  },
+                  fail(err) {
+                    console.error('跳转失败:', err);
+                  }
+                });
+              }
+            },
+            fail: (err) => {
+              console.error('showModal 失败:', err);
+              wx.showToast({
+                title: '弹窗显示失败',
+                icon: 'none'
+              });
+            }
+          });
           return;
         }
+        this.setData({canShare : true})
         this.setData({checkStatus : 'pass'})
         // 阅后即焚 修改完数据库了.
         if(res.result.code == 201){
@@ -383,17 +419,17 @@ Page({
       }
     });
   },
-    // 长按复制名称
-    onLongPressName() {
-      const { lastRecord } = this.data
-      if (!lastRecord || !lastRecord.name) return
-      wx.setClipboardData({
-        data: lastRecord.name,
-        success: () => {
-          wx.showToast({ title: '已复制', icon: 'success' })
-        }
-      })
-    },
+    // // 长按复制名称
+    // onLongPressName() {
+    //   const { lastRecord } = this.data
+    //   if (!lastRecord || !lastRecord.name) return
+    //   wx.setClipboardData({
+    //     data: lastRecord.name,
+    //     success: () => {
+    //       wx.showToast({ title: '已复制', icon: 'success' })
+    //     }
+    //   })
+    // },
   
   onSave() {
     const last = this.data.lastRecord;

@@ -17,11 +17,11 @@
       checkStatus === 'reject' ? '审核未通过!' :''}}
   </text>
 
+<!-- bindlongpress="onLongPressName" -->
     <view class="card" wx:if="{{lastRecord}}">
       <view class="card-row">
         <view class="card-info">
           <view  class="card-title" 
-                bindlongpress="onLongPressName"
                 hover-class="title-hover"
           >{{canShare ? lastRecord.name : ''}}</view>
           <view class="card-meta">时长：{{canShare ? (lastRecord.duration || 0) + ' 秒' : '0 秒'}}</view>

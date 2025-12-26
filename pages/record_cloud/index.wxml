@@ -20,7 +20,7 @@
       <view class="card-row">
         <view class="card-info">
           <view  class="card-title" 
-                bindlongpress="onLongPressName"
+                
                 hover-class="title-hover"
           >{{lastRecord.name || '未命名'}}</view>
 

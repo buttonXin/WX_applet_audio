@@ -1,0 +1,25 @@
+<view class="container">
+  <!-- 中间展示云函数返回的数据 -->
+  <view class="content-wrap">
+    <!-- 加载中状态 -->
+    <view class="loading" wx:if="{{loading}}">
+      <van-loading type="spinner" color="#1989fa" />
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 数据展示区域（加载完成且有数据） -->
+    <view class="data-content" wx:elif="{{!loading && dataResult}}">
+      <text class="content-text">{{dataResult}}</text>
+    </view>
+
+    <!-- 无数据/错误状态 -->
+    <view class="empty-content" wx:else>
+      <text class="empty-text">{{errorMsg || '暂无分享数据'}}</text>
+    </view>
+  </view>
+
+  <!-- 底部分享按钮 -->
+  <view class="btn-wrap">
+    <button class="share-btn" bindtap="handleShare">我也分享一个</button>
+  </view>
+</view>

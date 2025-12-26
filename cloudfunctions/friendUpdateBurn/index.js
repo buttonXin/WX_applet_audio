@@ -4,21 +4,54 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
-exports.main = async (event, context) => {
-  try {
-    const wxContext = cloud.getWXContext();
-    const operatorOpenid = wxContext.OPENID;
-    // 1. 获取入参：audioId（音频ID）、shareOpenid（用户A的openid）、operatorOpenid（用户B的openid）
-    const { audioId, shareOpenid } = event;
-    console.log('云函数更新数据库:', JSON.stringify(event) + " , operatorOpenid="+operatorOpenid)
 
-    if (!audioId || !shareOpenid) {
+// 封装延迟函数（核心：返回Promise，等待指定毫秒后resolve）
+const delay = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+async function checkTextBurn(uuid){
+  try{
+    const res = await db.collection('textBurn').where({
+      uuid: uuid,
+    }).get();
+     // 3. 检查查询结果：找不到则主动抛出错误
+     if (res.data.length === 0) {
       return {
-        success: false,
-        msg: '缺少音频ID或分享者ID'
+        success: true,
+        msg: '分享已销毁!',
+        error: err.message
       };
     }
 
+    // 4. 提取 text 字段（取第一条匹配数据，uuid 应唯一）
+    const targetData = res.data[0];
+    const text = targetData.text; // 提取 text 字段
+    const docId = targetData._id; // 获取文档 ID，用于删除操作
+
+    // 5. 删除这条数据（根据文档 ID 删除，效率更高）
+    await db.collection('textBurn').doc(docId).remove();
+
+    // 6. 返回成功结果（包含提取的 text 字段）
+    return {
+      success: true,
+      text: text, // 返回提取的 text 字段
+      message: `uuid: ${uuid} 对应数据已查询并删除成功`
+    };
+
+
+  }catch (err) {
+    console.error('修改burn字段失败：', err);
+    return {
+      success: false,
+      msg: '服务器错误',
+      error: err.message
+    };
+  }
+
+}
+async function checkResult(audioId,shareOpenid ,operatorOpenid ,tryAgain){
+  try {
     const res = await db.collection('audios').where({
       _id: audioId,
       _openid: shareOpenid
@@ -77,7 +110,6 @@ exports.main = async (event, context) => {
             msg: '阅后即焚分享异常'
           };
         }else{
-
           return {
             success: true,
             msg: '阅后即焚 独占',
@@ -99,11 +131,20 @@ exports.main = async (event, context) => {
         code: 500
       }
     } else {
-      return {
-        success: true,
-        msg: '审核中，请稍后再试',
-        code: 300
+      if(tryAgain >= 2){
+        return {
+          success: true,
+          msg: '审核中，请稍后再试',
+          code: 300
+        }
       }
+      console.log('开始等待4秒...');
+      // 等待4秒（4000毫秒）
+      await delay(4000);
+      // 4秒后执行的业务逻辑（示例：打印日志，可替换为你的操作）
+      console.log('4秒已到，执行延迟方法！');
+      return  await checkResult(audioId,shareOpenid ,operatorOpenid , tryAgain + 1);
+     
     }
 
   } catch (err) {
@@ -114,4 +155,25 @@ exports.main = async (event, context) => {
       error: err.message
     };
   }
+}
+
+exports.main = async (event, context) => {
+  const wxContext = cloud.getWXContext();
+    const operatorOpenid = wxContext.OPENID;
+    // 1. 获取入参：audioId（音频ID）、shareOpenid（用户A的openid）、operatorOpenid（用户B的openid）
+    const { audioId, shareOpenid , uuid } = event;
+    console.log('云函数更新数据库:', JSON.stringify(event) + " , operatorOpenid="+operatorOpenid)
+
+    if(uuid){
+      return  await checkTextBurn(uuid);
+    }
+    
+    if (!audioId || !shareOpenid) {
+      return {
+        success: false,
+        msg: '缺少音频ID或分享者ID'
+      };
+    }
+    
+    return await checkResult(audioId,shareOpenid ,operatorOpenid , tryAgain = 1);
 };

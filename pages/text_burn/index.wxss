@@ -1,0 +1,29 @@
+.burn-page { min-height: 100vh; padding: 40rpx 32rpx 48rpx; box-sizing: border-box; display: flex; flex-direction: column; 
+  background: linear-gradient(180deg, #f6fff9 0%, #f2f6f3 100%); }
+.burn-body { flex: 1; }  /* 占位，把底部推到底 */
+.burn-bottom { width: 100%; position: sticky; margin-bottom: 300rpx;  bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; gap: 24rpx; }
+
+/* pages/index/index.wxss */
+.input-container {
+  width: 100%;
+  /* padding: 28rpx 28rpx; 与原来的 padding 一致 */
+}
+
+.burn-input {
+  width: 100%;
+  background: #fff;
+  border-radius: 12rpx;
+  /* 移除固定的 height，让其根据内容自动调整 */
+  /* height: 140rpx; */ /* 注释掉或移除 */
+  padding: 28rpx 24rpx; /* textarea 通常有自己的 padding，这里可以调整 */
+  line-height: 1.4;
+  box-sizing: border-box;
+  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.06);
+  /* 可以设置最小高度 */
+  min-height: 80rpx; /* 设置一个最小高度，避免过于紧凑 */
+  /* 通常 textarea 会自带边框，如果需要自定义边框，可以加 */
+  /* border: 1rpx solid #ccc; */
+}
+
+.burn-btn { width: 100%; margin-top: 50rpx;}
+.btn-hidden { opacity: 0; pointer-events: none; }
