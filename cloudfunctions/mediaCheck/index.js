@@ -21,19 +21,6 @@ exports.main = async (event, context) => {
       // result 结构包含 errcode, errmsg, and label (敏感词等级)
       if (result.errcode === 0 && result.label !== 0) {
         // 存在敏感信息，errcode 0, label != 0 (例如 label 1: 广告, 2: 政治, 3: 色情等)
-        const res = await db.collection('textBurn')
-          .where({
-            _id: audioId, // 音频ID匹配
-            _openid: shareOpenid // 确保是用户A的音频（防止改错他人音频）
-          })
-          .update({
-            data: {
-              burn: targetBurn,
-              updateTime: db.serverDate(), // 记录修改时间
-              operatorOpenid: operatorOpenid // 记录是谁修改的（用户B的openid）
-            }
-          });
-
         return {
           success: false,
           message: '内容包含违规信息',
@@ -46,6 +33,7 @@ exports.main = async (event, context) => {
             text: mediaUrl,
             burn: 2,
             uuid: uuid,
+            openid: wxContext.OPENID,
             createTime: db.serverDate()
           }
         });

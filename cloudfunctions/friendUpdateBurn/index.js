@@ -10,7 +10,7 @@ const delay = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-async function checkTextBurn(uuid){
+async function checkTextBurn(uuid , operatorOpenid){
   try{
     const res = await db.collection('textBurn').where({
       uuid: uuid,
@@ -31,6 +31,14 @@ async function checkTextBurn(uuid){
     const text = targetData.text; // 提取 text 字段
     const docId = targetData._id; // 获取文档 ID，用于删除操作
 
+     // 先将数据备份到 textBurnBackup 集合
+     await db.collection('textBurnBackup').add({
+      data: {
+        ...targetData, // 复制原数据所有字段
+        backupTime: db.serverDate(), // 新增备份时间字段（可选）
+        operatorOpenid: operatorOpenid , // 读取者的openid
+      }
+    });
     // 5. 删除这条数据（根据文档 ID 删除，效率更高）
     await db.collection('textBurn').doc(docId).remove();
 
@@ -167,7 +175,7 @@ exports.main = async (event, context) => {
     console.log('云函数更新数据库:', JSON.stringify(event) + " , operatorOpenid="+operatorOpenid)
 
     if(uuid){
-      return  await checkTextBurn(uuid);
+      return  await checkTextBurn(uuid, operatorOpenid);
     }
     
     if (!audioId || !shareOpenid) {
