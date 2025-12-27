@@ -32,7 +32,22 @@ Page({
       console.log('用户选择了“记住此模式”');
       // 例如：保存到全局变量、本地存储 (wx.setStorageSync)、发送请求等
       wx.setStorageSync('text_burn', true); // 保存到本地存储 (示例)
-      wx.navigateTo({ url: '/pages/text_burn/index' });
+      // 仅可查看一次, 只有第一个用户都可查看, 并且离开页面后, 再也无法查看
+      wx.showModal({
+        title: '提示',
+        content: '文字分享页面, 分享后, 只有第一个用户都可查看, 并且离开页面后, 再也无法查看',
+        showCancel: false,
+        confirmText: '确认', // 确认按钮文字
+        // confirmColor: '#007AFF', // 确认按钮颜色 (可选)
+        success(res) {
+          // 用户点击确认按钮后的回调
+          if (res.confirm) {
+            console.log('用户点击了确认');
+            wx.navigateTo({ url: '/pages/text_burn/index' });
+          }
+        },
+      });
+     
     } else {
       console.log('用户取消了“记住此模式”');
       // 例如：清除本地存储的记录
