@@ -14,6 +14,9 @@ Page({
     }
   },
 
+  onTextBurnPage(){
+    wx.navigateTo({ url: '/pages/text_burn/index' });
+  },
   /**
      * Switch 状态改变时的回调函数
      * @param {Object} e - 事件对象

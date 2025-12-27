@@ -6,7 +6,7 @@
   <view class="top-header">
     <view class="switch-container">
       <!-- 文案 -->
-      <text class="switch-label">文字分享</text>
+      <text class="switch-label" bindtap="onTextBurnPage" >极简模式 (点击打开)</text>
       <!-- Switch 组件 -->
       <switch
         class="mode-switch"
@@ -26,8 +26,8 @@
   <view class="title_2">需要收藏录音后, 才能使用; 选择的是收藏的录音进行复读.</view>
 
   <view class="divider"></view>
-  <view class="title3">文字分享</view>
-  <view class="title_3">开启后, 跳转到文字分享页面, 并且后续再次打开小程序时,默认直接跳转到对应页面</view>
+  <view class="title3">极简模式</view>
+  <view class="title_3">开启后, 跳转到极简模式页面, 并且后续再次打开小程序时,默认直接跳转到对应页面</view>
   <view class="title_3">开启后, 弹窗提示说明</view>
   
 

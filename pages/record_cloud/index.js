@@ -119,6 +119,10 @@ Page({
     }
   },
 
+  showIconPopup(){
+    wx.navigateTo({ url: '/pages/me/index' });
+  },
+
   onLoad() {
 
     // 打开首页，如果是 burn 就直接跳转到text burn page
