@@ -21,7 +21,7 @@
   <view class="title1">录音</view>
   <view class="title_1">分享时, 先上传到腾讯的后台进行审核后, 其他人才能看到.审核时间一般10到60s.</view>
   <view class="title_11">直接分享:审核通过后, 所有用户都可查看.</view>
-  <view class="title_111">阅后即焚:审核通过后, 只有第一个用户都可查看, 并且离开页面后, 再也无法查看.</view>
+  <view class="title_111">仅可查看一次:审核通过后, 只有第一个用户都可查看, 并且离开页面后, 再也无法查看.</view>
 
   <view class="divider"></view>
   <view class="title2">复读机</view>
@@ -30,7 +30,7 @@
   <view class="divider"></view>
   <view class="title3">文字分享</view>
   <view class="title_3">开启后, 跳转到文字分享页面, 并且后续再次打开小程序时,默认直接跳转到对应页面</view>
-  <view class="title_33">功能也是阅后即焚, 只有第一个用户都可查看, 并且离开页面后, 再也无法查看.</view>
+  <view class="title_33">功能也是仅可查看一次, 只有第一个用户都可查看, 并且离开页面后, 再也无法查看.</view>
   
 
 </view>
