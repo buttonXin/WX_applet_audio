@@ -1,7 +1,7 @@
 // pages/text-burn/index.js
 // 阅后即焚页面
 
-const MAX_SHARE_COUNT = 50; // 每天最大分享次数
+const MAX_SHARE_COUNT = 20; // 每天最大分享次数
 
 function fmt(ms) {
   const sec = Math.floor(ms / 1000);
@@ -37,6 +37,8 @@ Page({
         buttonText: '选择图片', // 按钮文字
         imageId: '', // 图片地址
        maxSize: 3 * 1024 * 1024 , // 最大3M（单位：字节）
+       shareCoverPath: '',
+       coverImage: false, // 缩略图当做封面
 
       // 查看模式选项
       viewModes: [
@@ -97,7 +99,9 @@ Page({
   // ============ 分享次数管理 end ============
 
     onLoad(){
-      this.setData({ canShare: this.canShare() });
+      const coverImage = wx.getStorageSync('coverImage');
+      console.log('coverImage='+coverImage)
+      this.setData({ canShare: this.canShare() , coverImage:coverImage|| false });
 
     },
 
@@ -111,6 +115,13 @@ Page({
 
      // 按钮点击处理
       handleButtonTap() {
+        console.log('click',JSON.stringify(this.data));
+        if (!this.canShare()) {
+          this.setData({ canShare: false ,shareText:'' });
+          wx.showToast({ title: `每天只能分享${MAX_SHARE_COUNT}次`, icon: 'none' });
+          return
+        }
+
         if (this.data.isUploaded) {
           // 已上传完成，分享功能由 open-type="share" 处理
           return;
@@ -131,7 +142,7 @@ Page({
         count: 1,
         mediaType: ['image'],  // 只选择图片，不包含视频
         sourceType: ['album', 'camera'],
-        success: (res) => {
+        success:async (res) => {
           const tempFile = res.tempFiles[0];
 
           // 检查是否为 GIF
@@ -152,12 +163,14 @@ Page({
             });
             return;
             }
+            // 2. 生成缩略图（封面专用）
+            const thumbnailPath = await this.generateThumbnail(tempFile.tempFilePath);
+            console.log('thumbnailPath='+thumbnailPath)
+            this.setData({ shareCoverPath: thumbnailPath }); // 保存封面路径
           this.setData({
             imagePath: tempFile.tempFilePath,
             buttonText: '上传图片'
           });
-          // 选择成功后自动开始上传（根据需求可选）
-          // this.uploadImage();
         },
         fail: (err) => {
           console.log('选择图片失败', err);
@@ -208,8 +221,7 @@ Page({
     });
     // 方式1: 使用云开发上传
     this.uploadToCloud();
-    // 方式2: 上传到自己的服务器
-    // this.uploadToServer();
+
     },
 
 // 云开发上传
@@ -226,6 +238,7 @@ async uploadToCloud() {
       });
     });
     if(res.fileID){
+      this.incrementShareCount();
         console.log('上传成功 fileID = ', res.fileID);
         console.log('图片上传成功 fileID = ', res.fileID);
         const imageId = await this.mediaCheckAndSave(res.fileID);
@@ -313,10 +326,57 @@ async uploadToCloud() {
       }
       return '';
     },
+/**
+ * 生成图片缩略图（用于分享封面）
+ * @param {string} tempFilePath 原图临时路径
+ * @returns {Promise<string>} 缩略图临时路径
+ */
+generateThumbnail(tempFilePath) {
+  return new Promise((resolve, reject) => {
+    wx.compressImage({
+      src: tempFilePath,
+      quality: 70, // 缩略图质量70足够（体积小）
+      width: 800,  // 封面推荐宽度800px（高度按比例自动适配）
+      height: 640, // 5:4比例，适配微信分享封面
+      success: (res) => {
+        // 校验缩略图大小（确保≤128KB）
+        wx.getFileInfo({
+          filePath: res.tempFilePath,
+          success: (info) => {
+            if (info.size > 128 * 1024) {
+              // 若仍过大，再次压缩（质量降为50）
+              wx.compressImage({
+                src: res.tempFilePath,
+                quality: 50,
+                success: (res2) => resolve(res2.tempFilePath),
+                fail: reject
+              });
+            } else {
+              resolve(res.tempFilePath);
+            }
+          }
+        });
+      },
+      fail: reject
+    });
+  });
+},
+
+  onModeSwitchChange(e){
+    const isChecked = e.detail.value; // 获取新的开关状态 (true 或 false)
+    console.log('开关状态改变为:', isChecked);
+     // 更新页面数据
+     this.setData({
+      coverImage: isChecked
+    });
+    wx.setStorageSync('coverImage', isChecked);
+
+  },
+
 
    // 分享回调
    onShareAppMessage(res) {
-    const {   imageId ,selectedMode } = this.data;
+    const {   imageId ,selectedMode ,coverImage ,shareCoverPath} = this.data;
     console.log("share=" , JSON.stringify(this.data))
 
     if(!imageId){
@@ -337,12 +397,16 @@ async uploadToCloud() {
     });
    
 //    const time = '阅后即焚: ' + fmtStart(Date.now())  ;
-    const time = '图片分享'  ;
+    const time = '分享内容'  ;
+    let imageUrl = '/assets/image_ph.jpg';
+    if(coverImage){
+      imageUrl = shareCoverPath || '/assets/image_ph.jpg';
+    }
     return {
       title: time,
       path: '/pages/friend_image_burn_shared/index?imageId=' + imageId + "&text_butn_time=" + time
       + "&selectedMode=" + selectedMode, // 携带多个参数的路径
-      imageUrl: '/assets/image_ph.jpg', // 之前生成的图片作为封面
+      imageUrl: imageUrl, // 之前生成的图片作为封面
       // desc: '时间: ' + fmtStart(Date.now())
     };
   },

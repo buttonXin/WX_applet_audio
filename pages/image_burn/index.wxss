@@ -19,6 +19,25 @@
   margin-left: 16rpx;
 }
 
+
+/* Switch 容器，用于布局 */
+.switch-container {
+  margin-top: 20rpx;
+  display: flex; /* 使用 Flex 布局 */
+  justify-content: space-between; /* 文案在左边，开关在右边 */
+  align-items: center; /* 垂直居中对齐 */
+  /* 可以设置宽度，或者让其自适应 */
+  /* width: 100%; */
+}
+
+/* Switch 组件样式 */
+.mode-switch {
+  /* 可以调整开关的大小，但通常使用默认即可 */
+  /* transform: scale(0.8); */ /* 如果需要缩小开关 */
+  /* width: 52rpx; */
+  /* height: 32rpx; */
+}
+
 .image-box {
   width: 100%;
   height: 400rpx;

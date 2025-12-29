@@ -9,6 +9,17 @@
       />
       <text class="radio-text">{{item.label}}</text>
     </label>
+    <!-- 封面选择 -->
+    <view class="switch-container">
+      <text class="switch-label" bindtap="onTextBurnPage" >选择的图片当做封面图</text>
+      <!-- Switch 组件 -->
+      <switch
+        class="mode-switch"
+        checked="{{coverImage}}"
+        color="#007AFF" 
+        bindchange="onModeSwitchChange"
+      />
+    </view>
   </radio-group>
   
   <!-- 图片预览区域 -->

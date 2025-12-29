@@ -418,6 +418,7 @@ Page({
               showCountdown: false,
               timer: null
             });
+            this.updateBurnList();
             // 可选：震动/提示用户
             wx.vibrateShort();
           }
