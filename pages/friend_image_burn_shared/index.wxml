@@ -1,0 +1,28 @@
+<view class="container">
+  <!-- 顶部销毁提示（计时结束显示） -->
+  <view class="destroy-tip" wx:if="{{isDestroyed}}">图片已被销毁</view>
+
+  <!-- 倒计时区域（5/10秒模式显示，未销毁时展示） -->
+  <view class="countdown-wrap" wx:if="{{showCountdown && !isDestroyed}}">
+    <text class="countdown-text">剩余查看时间：{{countdown}} 秒</text>
+  </view>
+  
+  <!-- 图片显示区域 -->
+  <view class="image-box" wx:if="{{!isDestroyed}}">
+    <image 
+      wx:if="{{imageUrl}}" 
+      src="{{imageUrl}}" 
+      mode="aspectFit" 
+      class="display-image"
+      bindtap="previewImage"
+    />
+    <view class="loading-box" wx:if="{{isDestroyed}}">
+      <text class="placeholder-text">图片已销毁，无法查看</text>
+    </view>
+  </view>
+  
+  <!-- 底部按钮 -->
+  <button class="action-btn" bindtap="goToUpload">
+    我也分享一个
+  </button>
+</view>

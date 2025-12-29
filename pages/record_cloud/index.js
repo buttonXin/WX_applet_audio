@@ -125,13 +125,19 @@ Page({
 
   onLoad() {
 
-    // 打开首页，如果是 burn 就直接跳转到text burn page
-    const text_burn = wx.getStorageSync('text_burn');
-    console.log("text_burn= " + text_burn);
-    if(text_burn === true){
-      
-      wx.navigateTo({ url: '/pages/text_burn/index' });
+    let home_type = wx.getStorageSync('home_type');
+    
+    console.log("111 home_type ="+home_type);
+    if(!home_type){
+      home_type = '1';
     }
+
+    if(home_type === '2'){
+      wx.navigateTo({ url: '/pages/text_burn/index' });
+    }else if(home_type === '3'){
+      wx.navigateTo({ url: '/pages/image_burn/index' });
+    }
+
 
     const last = wx.getStorageSync('lastRecord');
     const userInfo = wx.getStorageSync('userInfo') || app.globalData?.userInfo || null;

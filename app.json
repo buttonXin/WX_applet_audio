@@ -6,7 +6,9 @@
     "pages/me/index",
     "pages/friend_shared/index",
     "pages/friend_text_burn_shared/index",
-    "pages/text_burn/index"
+    "pages/text_burn/index",
+    "pages/image_burn/index",
+    "pages/friend_image_burn_shared/index"
   ],
   "permission": {
     "scope.record": {
@@ -27,8 +29,8 @@
   
   "lazyCodeLoading": "requiredComponents", 
   "window": { "navigationBarTitleText": "复读机" ,
-  "navigationBarBackgroundColor": "#f6fff9",
+  "navigationBarBackgroundColor": "#fff",
   "navigationBarTextStyle": "black", 
-  "backgroundColor": "#f6fff9"
+  "backgroundColor": "#fff"
 }
 }

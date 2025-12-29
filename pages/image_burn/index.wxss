@@ -1,0 +1,58 @@
+.container {
+ min-height: 100vh; padding: 40rpx 32rpx 48rpx; box-sizing: border-box; display: flex; flex-direction: column;
+  background: linear-gradient(180deg, #fff 0%, #fff 100%);
+}
+
+/* 单选框组 */
+.radio-group {
+  width: 100%;
+  margin-bottom: 40rpx;
+}
+.radio-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+}
+.radio-text {
+  font-size: 30rpx;
+  color: #333;
+  margin-left: 16rpx;
+}
+
+.image-box {
+  width: 100%;
+  height: 400rpx;
+  border: 2rpx solid #b1b1b1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 60rpx;
+  background-color: #fff;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+}
+
+.placeholder-text {
+  font-size: 32rpx;
+  color: #000000;
+}
+
+.action-btn {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  /* border: 2rpx solid #333; */
+  background-color: #19A318FF;
+  font-size: 32rpx;
+  margin-bottom: 100rpx;
+  color: #fff;
+  border-radius: 10rpx;
+}
+
+.action-btn::after {
+  border: none;
+  color: #19A318FF;
+}

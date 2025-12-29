@@ -3,19 +3,18 @@
     <text class="slogan">人类的本质是复读机-.-</text>
   </view>
 
-  <view class="top-header">
-    <view class="switch-container">
-      <!-- 文案 -->
-      <text class="switch-label" bindtap="onTextBurnPage" >极简模式 (点击打开)</text>
-      <!-- Switch 组件 -->
-      <switch
-        class="mode-switch"
-        checked="{{rememberMode}}"
-        color="#007AFF" 
-        bindchange="onModeSwitchChange"
+ <!-- 顶部单选框 -->
+ <radio-group class="radio-group" bindchange="onViewModeChange">
+  <text class="text_desc">选择首页显示的页面</text>
+  <label class="radio-item" wx:for="{{viewModes}}" wx:key="value" bindtap="onRadioItemClick" data-value="{{item.value}}" data-label="{{item.label}}">
+      <radio 
+        value="{{item.value}}" 
+        checked="{{selectedMode === item.value}}"
+        color="#333"
       />
-    </view>
-  </view>
+      <text class="radio-text">{{item.label}}</text>
+    </label>
+  </radio-group>
   
   <view class="divider"></view>
   <view class="title1">录音</view>
@@ -29,6 +28,7 @@
   <view class="title3">极简模式</view>
   <view class="title_3">开启后, 跳转到极简模式页面, 并且后续再次打开小程序时,默认直接跳转到对应页面</view>
   <view class="title_3">开启后, 弹窗提示说明</view>
+  <view class="title_3">图片与文字模式, 开关同时只能选择一个!</view>
   
 
 </view>

@@ -50,7 +50,29 @@ exports.main = async (event, context) => {
         message: '检测服务错误'
       };
     }
-  }else{
+    // 2 图片审核
+  }else if (mediaType === 2 ){
+     try {
+       const result = await cloud.openapi.security.mediaCheckAsync({
+         mediaUrl: mediaUrl,
+         mediaType: 2,  // 1:音频 2:图片
+         version: 2,                // 版本号，固定填2
+         scene: 2,                  // 场景值：1=资料 2=评论 3=论坛 4=社交日志（按需选）
+         openid: wxContext.OPENID
+       });
+
+       return {
+         success: true,
+         traceId: result.traceId
+       };
+     } catch (err) {
+       console.error('安全检测失败:', err);
+       return {
+         success: false,
+         error: err.message
+       };
+     }
+   } else {
     try {
       const result = await cloud.openapi.security.mediaCheckAsync({
         mediaUrl: mediaUrl,

@@ -1,0 +1,37 @@
+<view class="container">
+    <!-- 顶部单选框 -->
+    <radio-group class="radio-group" bindchange="onViewModeChange">
+    <label class="radio-item" wx:for="{{viewModes}}" wx:key="value">
+      <radio 
+        value="{{item.value}}" 
+        checked="{{selectedMode === item.value}}"
+        color="#333"
+      />
+      <text class="radio-text">{{item.label}}</text>
+    </label>
+  </radio-group>
+  
+  <!-- 图片预览区域 -->
+  <view class="image-box">
+    <image 
+      wx:if="{{imagePath}}" 
+      src="{{imagePath}}" 
+      mode="aspectFit" 
+      class="preview-image"
+      bindtap="clearImage"
+    />
+    <text wx:else class="placeholder-text">图片</text>
+
+  </view>
+  
+  <!-- 操作按钮 -->
+  <button 
+    class="action-btn" 
+    loading="{{uploading}}"
+    disabled="{{uploading}}"
+    bindtap="handleButtonTap"
+    open-type="{{isUploaded ? 'share' : ''}}"
+  >
+    {{buttonText}}
+  </button>
+</view>

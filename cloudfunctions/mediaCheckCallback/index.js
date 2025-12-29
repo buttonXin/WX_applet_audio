@@ -8,7 +8,7 @@ const db = cloud.database()
 exports.main = async (event, context) => {
   // 1. 验证请求是否来自微信（略，可加 signature 校验）
    // 1. 先打印看看微信推送了什么
-  //  console.log('收到推送,完整event:', JSON.stringify(event))
+   console.log('收到推送,完整event:', JSON.stringify(event))
 
    // 2. 微信推送的字段是小写+下划线格式
    const { 
