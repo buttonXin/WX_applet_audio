@@ -119,8 +119,10 @@ Page({
   },
 
   updateBurnList(){
+    const now = new Date();
     const todayStr = this.formatDate(now); // 当天日期（YYYYMMDD）
     const targetKey = `${todayStr}_${this.data.imageId}`; // 组合键：年月日_imageId
+    const burnList = this.data.burnList;
     burnList.push(targetKey);
     // ========== 步骤4：更新本地存储（清理后+新增/无新增） ==========
     wx.setStorageSync('image_burn_ids', burnList);
@@ -216,7 +218,7 @@ Page({
             title: '提示',
             content: '正在审核中',
             confirmText: '重试',
-            cancelText: '分享图片',
+            cancelText: '去分享',
             success: (modalRes) => {
               if (modalRes.confirm) {
                 // 用户点击了“重试”
@@ -227,7 +229,7 @@ Page({
                 console.log('用户点击了去首页');
                 // 跳转到首页
                 wx.reLaunch({
-                  url: '/pages/record_cloud/index', // 替换为你的首页路径
+                  url: '/pages/image_burn/index', // 替换为你的首页路径
                   success() {
                     console.log('已跳转到首页');
                   },
@@ -270,7 +272,7 @@ Page({
     wx.showModal({
       title: '提示',
       content: content || '操作异常',
-      confirmText: '去首页',
+      confirmText: '去分享',
       success: (modalRes) => {
         if (modalRes.confirm) {
         
@@ -278,7 +280,7 @@ Page({
           console.log('用户点击了去首页');
           // 跳转到首页
           wx.reLaunch({
-            url: '/pages/record_cloud/index', // 替换为你的首页路径
+            url: '/pages/image_burn/index', // 替换为你的首页路径
             success() {
               console.log('已跳转到首页');
             },
@@ -355,6 +357,7 @@ Page({
     // 区分模式：仅5秒/10秒模式启动倒计时
     switch (selectedMode) {
       case 'all_5s':
+        this.updateBurnList();
         // 5秒模式：设置倒计时5秒，显示倒计时
         this.setData({
           countdown: 5,
@@ -363,6 +366,7 @@ Page({
         this.startCountdown(); // 启动倒计时
         break;
       case 'all_10s':
+        this.updateBurnList();
         // 10秒模式：设置倒计时10秒，显示倒计时
         this.setData({
           countdown: 10,
@@ -429,6 +433,14 @@ Page({
   onUnload() {
     if (this.data.timer) {
       clearInterval(this.data.timer);
+    }
+    if(this.data.showCountdown){
+      this.setData({
+        isDestroyed: true,
+        showCountdown: false,
+        timer: null
+      });
+      this.updateBurnList();
     }
   },
 

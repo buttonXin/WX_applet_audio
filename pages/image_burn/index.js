@@ -36,7 +36,7 @@ Page({
         isUploaded: false,    // 是否已上传完成
         buttonText: '选择图片', // 按钮文字
         imageId: '', // 图片地址
-       maxSize: 5 * 1024 * 1024 , // 最大3M（单位：字节）
+       maxSize: 3 * 1024 * 1024 , // 最大3M（单位：字节）
 
       // 查看模式选项
       viewModes: [
