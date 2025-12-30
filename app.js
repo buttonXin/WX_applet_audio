@@ -6,6 +6,11 @@ App({
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
 
+    // 初始化同意状态（本地缓存持久化）
+    this.globalData = {
+      hasAgreedDisclaimer: wx.getStorageSync("hasAgreedDisclaimer1") || false
+    };
+
     // // 登录
     // wx.login({
     //   success: res => {
@@ -26,6 +31,17 @@ App({
 
   },
   globalData: {
-    userInfo: null
+    hasAgreedDisclaimer: false // 标记是否同意免责声明
+  },
+  // 全局方法：显示免责声明弹窗（所有页面可调用）
+  showGlobalDisclaimer(that) {
+    that.setData({
+      showGlobalDisclaimer: true
+    });
+  },
+  // 全局方法：标记同意声明
+  agreeDisclaimer() {
+    this.globalData.hasAgreedDisclaimer = true;
+    wx.setStorageSync("hasAgreedDisclaimer1", true);
   }
 })

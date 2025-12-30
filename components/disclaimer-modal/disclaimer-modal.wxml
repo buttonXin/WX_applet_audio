@@ -1,0 +1,20 @@
+<!-- 全局免责声明弹窗（覆盖全屏，不可点击空白关闭） -->
+<view class="disclaimer-mask" wx:if="{{showModal}}">
+  <view class="disclaimer-content">
+    <!-- 标题 -->
+    <view class="disclaimer-title">用户使用须知</view>
+    <!-- 核心声明内容（优化版，适配多素材） -->
+    <scroll-view class="disclaimer-text" scroll-y>
+      <view class="text-item">1. 你在本小程序内上传/发布的音频、图片、文字等所有内容，仅用于小程序内展示/分享功能，我们不会收集、售卖或用于其他商业用途；</view>
+      <view class="text-item">2. 音频、图片、文字等内容将存储在微信云开发服务器，存储期限为：临时内容24小时自动删除，用户主动保存的内容保留至用户手动删除为止；</view>
+      <view class="text-item">3. 你需保证上传/发布的内容不侵犯他人肖像权、著作权、隐私权等合法权益，不包含违法、违规、色情、暴力等内容，若因内容违规引发纠纷/处罚，由你自行承担全部责任；</view>
+      <view class="text-item">4. 我们有权对违规内容进行审核、删除，且保留向相关部门举报的权利；</view>
+      <view class="text-item">5. 点击“同意并继续”即表示你已阅读并同意以上条款，若不同意，可选择退出小程序。</view>
+    </scroll-view>
+    <!-- 操作按钮（不可取消，仅同意/退出） -->
+    <view class="disclaimer-btns">
+      <button bindtap="exitMiniProgram" class="btn-exit">退出小程序</button>
+      <button bindtap="agreeDisclaimer" class="btn-agree" type="primary">同意并继续</button>
+    </view>
+  </view>
+</view>

@@ -1,3 +1,9 @@
+<!-- 引入全局免责声明组件 -->
+<disclaimer-modal 
+  showModal="{{showGlobalDisclaimer}}"
+  bind:agree="onAgreeDisclaimer"
+></disclaimer-modal>
+
 <view class="page">
   <view class="top">
     <text class="slogan">人类的本质是复读机-.-</text>

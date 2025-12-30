@@ -42,6 +42,8 @@ function getTimestampStr() {
 
 Page({
   data: {
+    showGlobalDisclaimer: false, // 控制隐私弹窗显示
+
     recording: false,
     durationMs: 0,
     durationText: '00:00',
@@ -123,8 +125,31 @@ Page({
     wx.navigateTo({ url: '/pages/me/index' });
   },
 
+  // 同意声明后关闭弹窗
+  onAgreeDisclaimer() {
+    this.setData({
+      showGlobalDisclaimer: false
+    });
+    // 可添加同意后的初始化逻辑（如加载页面数据）
+    wx.showToast({ title: "欢迎使用", icon: "success" });
+    this.onInitLoad();
+  },
+
   onLoad() {
 
+     // 进入页面先判断是否已同意声明
+    if (!app.globalData.hasAgreedDisclaimer) {
+      // 未同意则显示弹窗
+      this.setData({
+        showGlobalDisclaimer: true
+      });
+    }else {
+      this.onInitLoad();
+    }
+
+    
+  },
+  onInitLoad(){
     let home_type = wx.getStorageSync('home_type');
     
     console.log("111 home_type ="+home_type);
