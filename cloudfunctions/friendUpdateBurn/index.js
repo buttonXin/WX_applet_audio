@@ -32,13 +32,13 @@ async function checkTextBurn(uuid , operatorOpenid){
     const docId = targetData._id; // 获取文档 ID，用于删除操作
 
      // 先将数据备份到 textBurnBackup 集合
-     await db.collection('textBurnBackup').add({
-      data: {
-        ...targetData, // 复制原数据所有字段
-        backupTime: db.serverDate(), // 新增备份时间字段（可选）
-        operatorOpenid: operatorOpenid , // 读取者的openid
-      }
-    });
+    //  await db.collection('textBurnBackup').add({
+    //   data: {
+    //     ...targetData, // 复制原数据所有字段
+    //     backupTime: db.serverDate(), // 新增备份时间字段（可选）
+    //     operatorOpenid: operatorOpenid , // 读取者的openid
+    //   }
+    // });
     // 5. 删除这条数据（根据文档 ID 删除，效率更高）
     await db.collection('textBurn').doc(docId).remove();
 
@@ -158,7 +158,7 @@ async function checkImageBurn(imageId,shareOpenid ,operatorOpenid ,tryAgain){
       await delay(4000);
       // 4秒后执行的业务逻辑（示例：打印日志，可替换为你的操作）
       console.log('4秒已到，执行延迟方法！');
-      return  await checkResult(audioId,shareOpenid ,operatorOpenid , tryAgain + 1);
+      return  await checkImageBurn(imageId, shareOpenid , operatorOpenid , tryAgain + 1);
      
     }
 
