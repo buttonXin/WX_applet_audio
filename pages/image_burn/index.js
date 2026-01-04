@@ -168,10 +168,9 @@ Page({
             const thumbnailPath = await this.generateThumbnail(tempFile.tempFilePath);
             console.log('thumbnailPath='+thumbnailPath)
             this.setData({ shareCoverPath: thumbnailPath }); // 保存封面路径
-          this.setData({
-            imagePath: tempFile.tempFilePath,
-            buttonText: '上传图片'
-          });
+            this.setData({imagePath: tempFile.tempFilePath, uploading: true, buttonText: '上传中...'});
+            this.uploadToCloud();
+
         },
         fail: (err) => {
           console.log('选择图片失败', err);

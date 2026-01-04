@@ -31,7 +31,9 @@ Page({
     maxNameLength: 50, // 名字最大长度
     burnList: [], // 本地存储
 
+    checkOver: false, // 是否已经加载
     // 倒计时相关
+    countdownTotal: 3, // 倒计时总时间
     countdown: 0, // 倒计时秒数（5/10）
     showCountdown: false, // 是否显示倒计时
     isDestroyed: false, // 是否已销毁
@@ -49,18 +51,29 @@ Page({
     
     console.log("options=",JSON.stringify(options))
     this.setData({ imageId: options.imageId , selectedMode: options.selectedMode});
-
-    if(options.selectedMode === 'all_3s' ||options.selectedMode === 'all_10s' ){
-      const result = this.handleImageBurnStorage();
-      console.log("result="+ result);
-      if(result){
-        return;
-      }
-    }
-     // 等待审核
-    wx.showLoading({ title: '查询审核结果...', mask: true });
-    this.waitForCheckResult(options.imageId);
   },
+
+  /**
+   * 页面隐藏：暂停倒计时（可选，根据业务需求）
+   */
+  onHide() {
+    if (this.data.timer) {
+      clearInterval(this.data.timer);
+    }
+  },
+
+  /**
+   * 页面重新显示：恢复倒计时（可选）
+   */
+  onShow() {
+    const { selectedMode, countdown, isDestroyed } = this.data;
+    // 仅5/10秒模式、未销毁、倒计时>0时恢复
+    if ((selectedMode === 'all_5s' || selectedMode === 'all_10s') && !isDestroyed && countdown > 0) {
+      this.startCountdown();
+    }
+  },
+
+
 
   /**
    * 处理图片阅后即焚的本地存储逻辑
@@ -146,7 +159,7 @@ Page({
         imageId:imageId
       }
     }).then(res => {
-      this.setData({canShare : false})
+      this.setData({checkOver : true})
       wx.hideLoading();
       if (res.result.success) {
         console.log("uopdate  success" , JSON.stringify(res.result))
@@ -206,7 +219,7 @@ Page({
         }
         // 处理审核中
         if(res.result.code == 300){
-          this.setData({checkStatus : 'pendding'})
+          this.setData({checkOver : false})
           // 显示包含“去首页”和“重试”按钮的模态框
           wx.showModal({
             title: '提示',
@@ -327,7 +340,27 @@ Page({
       wx.hideLoading();
     }
   },
-   
+
+   // 点击加载图片内容
+  loadImageContent(){
+    const { checkOver, selectedMode, imageId} = this.data;
+
+    if(!checkOver){
+      if(selectedMode === 'all_3s' ||selectedMode === 'all_10s' ){
+        const result = this.handleImageBurnStorage();
+        console.log("result="+ result);
+        if(result){
+          return;
+        }
+      }
+       // 等待审核
+      wx.showLoading({ title: '查询审核结果...', mask: true });
+      this.waitForCheckResult(imageId);
+
+      return ;
+    }
+  },
+
    // 预览图片（点击放大）
    previewImage() {
     if (!this.data.imageUrl) return;
@@ -370,6 +403,7 @@ onImageLongPress() {
         // 5秒模式：设置倒计时5秒，显示倒计时
         this.setData({
           countdown: 3,
+          countdownTotal: 3,
           showCountdown: true
         });
         this.startCountdown(); // 启动倒计时
@@ -379,6 +413,7 @@ onImageLongPress() {
         // 10秒模式：设置倒计时10秒，显示倒计时
         this.setData({
           countdown: 10,
+          countdownTotal: 10,
           showCountdown: true
         });
         this.startCountdown(); // 启动倒计时
@@ -454,25 +489,6 @@ onImageLongPress() {
     }
   },
 
-  /**
-   * 页面隐藏：暂停倒计时（可选，根据业务需求）
-   */
-  onHide() {
-    if (this.data.timer) {
-      clearInterval(this.data.timer);
-    }
-  },
-
-  /**
-   * 页面重新显示：恢复倒计时（可选）
-   */
-  onShow() {
-    const { selectedMode, countdown, isDestroyed } = this.data;
-    // 仅5/10秒模式、未销毁、倒计时>0时恢复
-    if ((selectedMode === 'all_5s' || selectedMode === 'all_10s') && !isDestroyed && countdown > 0) {
-      this.startCountdown();
-    }
-  },
 
 });
 

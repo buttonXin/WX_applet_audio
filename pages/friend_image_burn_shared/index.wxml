@@ -7,15 +7,23 @@
     <text class="countdown-text">剩余查看时间：{{countdown}} 秒</text>
   </view>
   
-  <!-- 图片显示区域 -->
-  <view class="image-box" wx:if="{{!isDestroyed}}">
+   <!-- 图片显示区域 -->
+   <view class="image-box" wx:if="{{!isDestroyed}}">
+    <!-- 未加载时显示提示 -->
+    <view class="loading-box" wx:if="{{!imageUrl}}" bindtap="loadImageContent">
+      <text class="placeholder-text">点击加载图片内容</text>
+    </view>
+    
+    <!-- 加载完成后显示图片，点击可预览 -->
     <image 
       wx:if="{{imageUrl}}" 
       src="{{imageUrl}}" 
       mode="aspectFit" 
       class="display-image"
-      bindtap="previewImage"
+      bindtap="openFullScreenPreview"
+      catchlongpress="onImageLongPress"
     />
+    
     <view class="loading-box" wx:if="{{isDestroyed}}">
       <text class="placeholder-text">图片已销毁，无法查看</text>
     </view>

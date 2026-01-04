@@ -11,7 +11,7 @@
 
 .countdown-text {
   font-size: 28rpx;
-  color: #e74c3c;
+  color: #1c1514;
   font-weight: 500;
 }
 
@@ -36,6 +36,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 100rpx; /* 增加点击区域 */
+  /* border: 1rpx solid #e7e7e7; */
 }
 
 .placeholder-text {
