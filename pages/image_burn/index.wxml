@@ -1,3 +1,12 @@
+<!-- 隐藏的Canvas（用于iOS缩略图缩放，绝对定位且移出屏幕） -->
+<canvas 
+  type="2d" 
+  id="compressCanvas" 
+  class="hidden-canvas"
+  style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+></canvas>
+
+
 <view class="container">
     <!-- 顶部单选框 -->
     <radio-group class="radio-group" bindchange="onViewModeChange">
