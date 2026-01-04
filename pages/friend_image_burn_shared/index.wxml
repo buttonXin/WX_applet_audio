@@ -37,10 +37,17 @@
     style="width: 100vw; height: 100vh;"
     catchlongpress="onImageLongPress" 
   />
-  <!-- 关闭按钮（阻止点击穿透） -->
   <view class="preview-close-btn" bindtap="closeFullScreenPreview" catchtap="">
     <text>×</text>
   </view>
-</view>
+  </view>
+
+  <!-- ========== 新增：previewCanvas  wx:if="{{isIos}}" 节点（用于绘制水印） ========== -->
+  <canvas 
+    type="2d" 
+    id="previewCanvas" 
+    class="preview-canvas"
+   
+  />
 
 </view>

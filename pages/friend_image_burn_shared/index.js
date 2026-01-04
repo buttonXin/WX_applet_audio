@@ -441,6 +441,7 @@ onImageLongPress() {
    * 页面卸载：清除定时器（防止内存泄漏）
    */
   onUnload() {
+    this.disableAntiScreenshot();
     if (this.data.timer) {
       clearInterval(this.data.timer);
     }
@@ -461,6 +462,7 @@ onImageLongPress() {
     if (this.data.timer) {
       clearInterval(this.data.timer);
     }
+    this.disableAntiScreenshot();
   },
 
   /**
@@ -472,7 +474,102 @@ onImageLongPress() {
     if ((selectedMode === 'all_5s' || selectedMode === 'all_10s') && !isDestroyed && countdown > 0) {
       this.startCountdown();
     }
+
+     // 仅在预览图片/播放广告等敏感场景开启
+     this.enableAntiScreenshot();
   },
 
+   /**
+   * 开启防截屏：截屏/录屏时隐藏内容
+   */
+   enableAntiScreenshot() {
+    if (!wx.setVisualEffectOnCapture) {
+      wx.showToast({ title: "当前微信版本不支持防截屏", icon: "none" });
+      return;
+    }
+
+    wx.setVisualEffectOnCapture({
+      visualEffect: "blur", // 截屏/录屏时隐藏内容（核心参数）
+      success: () => {
+        console.log("防截屏功能已开启");
+        setTimeout(() => {
+          this.enableVisualProtection(); 
+        }, 500);
+      
+      },
+      fail: (err) => {
+        console.error("开启防截屏失败：", err);
+        this.enableVisualProtection(); 
+      }
+    });
+  },
+ /**
+ * 修复版：iOS水印绘制（全屏多行多列）
+ */
+enableVisualProtection() {
+  // if (!this.data.isIos) return;
+
+  setTimeout(() => {
+    const query = wx.createSelectorQuery().in(this);
+    query.select("#previewCanvas").fields({ node: true, size: true }).exec((res) => {
+      if (!res || !res[0] || !res[0].node) {
+        console.warn("未找到previewCanvas节点，跳过水印绘制");
+        return;
+      }
+
+      const canvas = res[0].node;
+      const ctx = canvas.getContext("2d");
+      const systemInfo = wx.getSystemInfoSync();
+      
+      // 1. 设置Canvas尺寸（必须和屏幕一致）
+      canvas.width = systemInfo.screenWidth;
+      canvas.height = systemInfo.screenHeight;
+
+      // 2. 水印基础配置
+      const text = "仅本人查看 禁止截屏"; // 可替换为用户ID/时间戳
+      const fontSize = systemInfo.screenWidth / 25; // 适配不同屏幕（如iPhone 14约16px）
+      ctx.font = `${fontSize}px sans-serif`; // 字体大小
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; // 透明度（0.05-0.1最佳）
+      ctx.textAlign = "center"; // 文字居中（可选）
+      
+      // 3. 倾斜角度（30度，比45度更易铺满）
+      const rotateAngle = -Math.PI / 6; // -30度（向左倾斜）
+      ctx.rotate(rotateAngle);
+
+      // 4. 关键：绘制参数（控制多行多列）
+      const textWidth = ctx.measureText(text).width; // 计算文字实际宽度
+      const stepX = textWidth * 2; // 横向间距（文字宽度的2倍，密集）
+      const stepY = fontSize * 3; // 纵向间距（字体高度的3倍）
+      // 绘制范围：超出屏幕1.5倍，确保无空白
+      const startX = -systemInfo.screenWidth * 1.5;
+      const endX = systemInfo.screenWidth * 1.5;
+      const startY = -systemInfo.screenHeight * 1.5;
+      const endY = systemInfo.screenHeight * 1.5;
+
+      // 5. 循环绘制：多行多列铺满全屏
+      for (let x = startX; x < endX; x += stepX) {
+        for (let y = startY; y < endY; y += stepY) {
+          ctx.fillText(text, x, y); // 每个坐标点绘制一个水印
+        }
+      }
+
+      console.log("水印绘制完成，已铺满全屏");
+    });
+  }, 500);
+},
+
+  /**
+   * 关闭防截屏：恢复正常显示
+   */
+  disableAntiScreenshot() {
+    if (!wx.setVisualEffectOnCapture) return;
+
+    wx.setVisualEffectOnCapture({
+      visualEffect: "none", // 关闭视觉效果
+      success: () => {
+        console.log("防截屏功能已关闭");
+      }
+    });
+  },
 });
 
