@@ -42,12 +42,12 @@ Page({
 
       // 查看模式选项
       viewModes: [
-        { value: 'all', label: '所有人可查看' },
+        { value: 'all_3s', label: '所有人仅可查看3秒' },
         { value: 'all_10s', label: '所有人仅可查看10秒' },
-        { value: 'all_5s', label: '所有人仅可查看5秒' },
-        { value: 'one_destroy', label: '仅一人可查看，查看完后销毁' }
+        { value: 'one_destroy', label: '仅一人可查看，查看完后销毁' },
+        { value: 'all', label: '所有人可查看' }
       ],
-      selectedMode: 'all'  // 默认选择第一个
+      selectedMode: 'all_3s'  // 默认选择第一个
 
     },
 
@@ -101,7 +101,8 @@ Page({
     onLoad(){
       const coverImage = wx.getStorageSync('coverImage');
       console.log('coverImage='+coverImage)
-      this.setData({ canShare: this.canShare() , coverImage:coverImage|| false });
+      // 默认开启封面
+      this.setData({ canShare: this.canShare() , coverImage: coverImage|| true });
 
     },
 
@@ -335,7 +336,7 @@ generateThumbnail(tempFilePath) {
   return new Promise((resolve, reject) => {
     wx.compressImage({
       src: tempFilePath,
-      quality: 70, // 缩略图质量70足够（体积小）
+      quality: 1, // 缩略图质量70足够（体积小）
       width: 800,  // 封面推荐宽度800px（高度按比例自动适配）
       height: 640, // 5:4比例，适配微信分享封面
       success: (res) => {

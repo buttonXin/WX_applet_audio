@@ -11,7 +11,7 @@
     </label>
     <!-- 封面选择 -->
     <view class="switch-container">
-      <text class="switch-label" bindtap="onTextBurnPage" >选择的图片当做封面图</text>
+      <text class="switch-label" bindtap="onTextBurnPage" >图片马赛克后当做封面图</text>
       <!-- Switch 组件 -->
       <switch
         class="mode-switch"

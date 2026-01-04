@@ -25,4 +25,22 @@
   <button class="action-btn" bindtap="goToUpload">
     我也分享一个
   </button>
+
+<!-- 全屏 Image 预览层（默认隐藏） -->
+ <!-- 保持图片比例，完整显示 -->
+  <!-- 拦截长按事件 -->
+<view class="fullscreen-preview" wx:if="{{showPreview}}" bindtap="closeFullScreenPreview">
+  <!-- 全屏显示的 Image -->
+  <image 
+    src="{{imageUrl}}" 
+    mode="aspectFit" 
+    style="width: 100vw; height: 100vh;"
+    catchlongpress="onImageLongPress" 
+  />
+  <!-- 关闭按钮（阻止点击穿透） -->
+  <view class="preview-close-btn" bindtap="closeFullScreenPreview" catchtap="">
+    <text>×</text>
+  </view>
+</view>
+
 </view>

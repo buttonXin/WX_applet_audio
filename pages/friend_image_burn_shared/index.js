@@ -40,12 +40,8 @@ Page({
 
     imageId: '', // 图片ID（用于从云端获取）
     imageUrl: '',   // 图片URL
-    selectedMode: '',   // 图片的查看模式 
+    selectedMode: '',   // 图片的查看模式 在 image_burn 有定义
   },
-  // { value: 'all', label: '所有人可查看' },
-  // { value: 'all_10s', label: '所有人仅可查看10秒' },
-  // { value: 'all_5s', label: '所有人仅可查看5秒' },
-  // { value: 'one_destroy', label: '仅一人可查看，查看完后销毁' }
 
 
 
@@ -54,7 +50,7 @@ Page({
     console.log("options=",JSON.stringify(options))
     this.setData({ imageId: options.imageId , selectedMode: options.selectedMode});
 
-    if(options.selectedMode === 'all_5s' ||options.selectedMode === 'all_10s' ){
+    if(options.selectedMode === 'all_3s' ||options.selectedMode === 'all_10s' ){
       const result = this.handleImageBurnStorage();
       console.log("result="+ result);
       if(result){
@@ -64,8 +60,6 @@ Page({
      // 等待审核
     wx.showLoading({ title: '查询审核结果...', mask: true });
     this.waitForCheckResult(options.imageId);
-
-
   },
 
   /**
@@ -338,11 +332,26 @@ Page({
    previewImage() {
     if (!this.data.imageUrl) return;
     
-    wx.previewImage({
-      current: this.data.imageUrl,
-      urls: [this.data.imageUrl]
-    });
+    this.setData({ showPreview: true });
+    // 延迟100ms确保预览层渲染完成，再绘制Canvas
+    this.openFullScreenPreview();
+
   },
+ // 打开全屏预览
+ openFullScreenPreview() {
+  this.setData({ showPreview: true });
+},
+
+// 关闭全屏预览
+closeFullScreenPreview() {
+  this.setData({ showPreview: false });
+},
+
+// 拦截图片长按事件（降低保存概率）
+onImageLongPress() {
+  // wx.showToast({ title: "禁止保存图片", icon: "none" });
+},
+
 
   // 跳转到上传页面
   goToUpload() {
@@ -356,11 +365,11 @@ Page({
 
     // 区分模式：仅5秒/10秒模式启动倒计时
     switch (selectedMode) {
-      case 'all_5s':
+      case 'all_3s':
         this.updateBurnList();
         // 5秒模式：设置倒计时5秒，显示倒计时
         this.setData({
-          countdown: 5,
+          countdown: 3,
           showCountdown: true
         });
         this.startCountdown(); // 启动倒计时
