@@ -57,6 +57,7 @@ Page({
    * 页面隐藏：暂停倒计时（可选，根据业务需求）
    */
   onHide() {
+    this.disableAntiScreenshot();
     if (this.data.timer) {
       clearInterval(this.data.timer);
     }
@@ -68,10 +69,13 @@ Page({
   onShow() {
     const { selectedMode, countdown, isDestroyed } = this.data;
     // 仅5/10秒模式、未销毁、倒计时>0时恢复
-    if ((selectedMode === 'all_5s' || selectedMode === 'all_10s') && !isDestroyed && countdown > 0) {
+    if ((selectedMode === 'all_3s' || selectedMode === 'all_10s') && !isDestroyed && countdown > 0) {
       this.startCountdown();
     }
+    // 仅在预览图片/播放广告等敏感场景开启
+    this.enableAntiScreenshot();
   },
+
 
 
 
@@ -402,8 +406,8 @@ onImageLongPress() {
         this.updateBurnList();
         // 5秒模式：设置倒计时5秒，显示倒计时
         this.setData({
-          countdown: 3,
-          countdownTotal: 3,
+          countdown: 5,
+          countdownTotal: 5,
           showCountdown: true
         });
         this.startCountdown(); // 启动倒计时
@@ -465,6 +469,8 @@ onImageLongPress() {
             this.updateBurnList();
             // 可选：震动/提示用户
             wx.vibrateShort();
+            // 时间到后,关闭预览
+            this.closeFullScreenPreview();
           }
         });
       }, 1000);
@@ -476,6 +482,7 @@ onImageLongPress() {
    * 页面卸载：清除定时器（防止内存泄漏）
    */
   onUnload() {
+    this.disableAntiScreenshot();
     if (this.data.timer) {
       clearInterval(this.data.timer);
     }
@@ -488,7 +495,120 @@ onImageLongPress() {
       this.updateBurnList();
     }
   },
+  
+  /**
+   * 开启防截屏：截屏/录屏时隐藏内容
+   */
+  enableAntiScreenshot() {
+    if (!wx.setVisualEffectOnCapture) {
+      wx.showToast({ title: "当前微信版本不支持防截屏", icon: "none" });
+      return;
+    }
 
+    wx.setVisualEffectOnCapture({
+      visualEffect: "blur", // 截屏/录屏时隐藏内容（核心参数）
+      success: () => {
+        console.log("防截屏功能已开启");
+        setTimeout(() => {
+          this.enableVisualProtection(); 
+        }, 500);
+      
+      },
+      fail: (err) => {
+        console.error("开启防截屏失败：", err);
+        this.enableVisualProtection(); 
+      }
+    });
+  },
+
+/**
+ * iOS专属：绘制多颜色全屏倾斜水印（核心修改版）
+ */
+enableVisualProtection() {
+  setTimeout(() => {
+    const query = wx.createSelectorQuery().in(this);
+    query.select("#previewCanvas").fields({ node: true, size: true }).exec((res) => {
+      if (!res || !res[0] || !res[0].node) {
+        console.warn("未找到previewCanvas节点，跳过水印绘制");
+        return;
+      }
+
+      const canvas = res[0].node;
+      const ctx = canvas.getContext("2d");
+      const systemInfo = wx.getSystemInfoSync();
+      canvas.width = systemInfo.screenWidth;
+      canvas.height = systemInfo.screenHeight;
+
+     // ========== 基础配置（保证文字铺开无叠加） ==========
+     const fontSize = systemInfo.screenWidth / 25; // 适配屏幕字体大小
+     ctx.font = `${fontSize}px sans-serif`;
+     const rotateAngle = -Math.PI / 6; // 30度倾斜
+     ctx.rotate(rotateAngle);
+
+     // 1. 定义渐变水印文字内容
+     const watermarkText = "仅本人查看 禁止截屏";
+     // 2. 计算单组文字宽度（用于设置步长，避免叠加）
+     const singleTextWidth = ctx.measureText(watermarkText).width;
+     // 3. 设置步长（关键：步长>文字宽度，确保铺开）
+     const stepX = singleTextWidth * 2.5; // 横向间距=文字宽度×2.5（均匀铺开）
+     const stepY = fontSize * 3; // 纵向间距=字体大小×7（行间距足够）
+     // 4. 绘制范围（超出屏幕1.5倍，全屏覆盖）
+     const drawRangeX = systemInfo.screenWidth * 1.5;
+     const drawRangeY = systemInfo.screenHeight * 1.5;
+
+      // ========== 循环绘制渐变水印（均匀铺开） ==========
+      for (let x = -drawRangeX; x < drawRangeX * 2; x += stepX) {
+        for (let y = -drawRangeY; y < drawRangeY * 2; y += stepY) {
+          // 绘制单组渐变文字
+          this.drawGradientWatermark(ctx, x, y, watermarkText, fontSize);
+        }
+      }
+
+      console.log("多颜色水印绘制完成，已铺满全屏");
+    });
+  }, 500);
+},
+  /**
+   * 核心方法：绘制单组渐变颜色水印文字
+   * @param {CanvasRenderingContext2D} ctx - Canvas上下文
+   * @param {number} x - 起始X坐标
+   * @param {number} y - 起始Y坐标
+   * @param {string} text - 水印文字
+   * @param {number} fontSize - 字体大小
+   */
+  drawGradientWatermark(ctx, x, y, text, fontSize) {
+    // 1. 计算文字总宽度（用于创建渐变范围）
+    const textWidth = ctx.measureText(text).width;
+    
+    // 2. 创建线性渐变（从文字左端到右端，斜向渐变更自然）
+    // 渐变起点：文字左上角，终点：文字右下角（贴合倾斜角度）
+    const gradient = ctx.createLinearGradient(
+      x, y - fontSize / 2, 
+      x + textWidth, y + fontSize / 2
+    );
+    // 3. 配置渐变颜色（低透明度，肉眼不可见，截屏可见）
+    gradient.addColorStop(0, "rgba(255, 0, 0, 0.3)"); // 起始色：浅红
+    gradient.addColorStop(0.4, "rgba(0, 255, 0, 0.3)"); // 中间色：浅绿
+    gradient.addColorStop(0.8, "rgba(0, 0, 255, 0.3)"); // 结束色：浅蓝
+
+    // 4. 设置渐变填充并绘制文字
+    ctx.fillStyle = gradient;
+    ctx.fillText(text, x, y);
+  },
+
+  /**
+   * 关闭防截屏：恢复正常显示
+   */
+  disableAntiScreenshot() {
+    if (!wx.setVisualEffectOnCapture) return;
+
+    wx.setVisualEffectOnCapture({
+      visualEffect: "none", // 关闭视觉效果
+      success: () => {
+        console.log("防截屏功能已关闭");
+      }
+    });
+  },
 
 });
 

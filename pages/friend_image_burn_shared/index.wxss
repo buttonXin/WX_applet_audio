@@ -94,3 +94,19 @@
   color: #fff;
   font-size: 36rpx;
 }
+
+
+/* previewCanvas 样式：全屏覆盖，透明不影响视觉 */
+.preview-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* 关键：透明背景，肉眼看不到画布 */
+  background: transparent;
+  /* 层级高于图片，低于关闭按钮 */
+  z-index: 99998;
+  /* 禁止触摸事件，不影响图片操作 */
+  pointer-events: none;
+}

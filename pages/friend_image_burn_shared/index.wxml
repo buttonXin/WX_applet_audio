@@ -51,4 +51,11 @@
   </view>
 </view>
 
+  <!-- ========== 新增：previewCanvas  wx:if="{{isIos}}" 节点（用于绘制水印） ========== -->
+  <canvas 
+    type="2d" 
+    id="previewCanvas" 
+    class="preview-canvas"
+   
+  />
 </view>

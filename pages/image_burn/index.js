@@ -42,7 +42,7 @@ Page({
 
       // 查看模式选项
       viewModes: [
-        { value: 'all_3s', label: '所有人仅可查看3秒' },
+        { value: 'all_3s', label: '所有人仅可查看5秒' },
         { value: 'all_10s', label: '所有人仅可查看10秒' },
         { value: 'one_destroy', label: '仅一人可查看，查看完后销毁' },
         { value: 'all', label: '所有人可查看' }
