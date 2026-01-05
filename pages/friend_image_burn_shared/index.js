@@ -506,7 +506,7 @@ onImageLongPress() {
     }
 
     wx.setVisualEffectOnCapture({
-      visualEffect: "blur", // 截屏/录屏时隐藏内容（核心参数）
+      visualEffect: "hidden", // 截屏/录屏时隐藏内容（核心参数）
       success: () => {
         console.log("防截屏功能已开启");
         setTimeout(() => {
