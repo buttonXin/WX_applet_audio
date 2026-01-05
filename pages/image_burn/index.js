@@ -164,8 +164,18 @@ Page({
             });
             return;
             }
-            // 2. 生成缩略图（封面专用）
-            const thumbnailPath = await this.generateThumbnail(tempFile.tempFilePath);
+            const systemInfo = wx.getSystemInfoSync();
+            const isIos = systemInfo.platform === 'ios';
+            console.log('isIos='+isIos);
+            let thumbnailPath = '';
+            if (isIos) {
+              // iOS：用Canvas强制缩放尺寸（解决width/height参数失效问题）
+              thumbnailPath = await this.compressByVisibleCanvas(tempFile.tempFilePath, 400, 320);
+            } else {
+              // Android：保留原有compressImage逻辑（尺寸参数生效）
+              thumbnailPath =  await this.generateThumbnail(tempFile.tempFilePath);
+            }
+        
             console.log('thumbnailPath='+thumbnailPath)
             this.setData({ shareCoverPath: thumbnailPath }); // 保存封面路径
             this.setData({imagePath: tempFile.tempFilePath, uploading: true, buttonText: '上传中...'});
@@ -358,6 +368,85 @@ generateThumbnail(tempFilePath) {
         });
       },
       fail: reject
+    });
+  });
+},
+
+  /**
+   * iOS专属：使用页面内可见Canvas（隐藏）缩放图片（核心修复）
+   * @param {string} tempFilePath - 原始路径
+   * @param {number} targetWidth - 目标宽度
+   * @param {number} targetHeight - 目标高度
+   * @returns {Promise<string>} 缩放后路径
+   */
+compressByVisibleCanvas(tempFilePath, targetWidth, targetHeight) {
+  return new Promise((resolve, reject) => {
+    // 1. 获取原始图片信息
+    wx.getImageInfo({
+      src: tempFilePath,
+      success: (imgInfo) => {
+        // 2. 计算缩放比例（保持原比例，不拉伸）
+        const scale = Math.min(
+          targetWidth / imgInfo.width,
+          targetHeight / imgInfo.height
+        );
+        const finalWidth = Math.floor(imgInfo.width * scale);
+        const finalHeight = Math.floor(imgInfo.height * scale);
+
+        // 3. 更新Canvas尺寸（和缩放后图片一致）
+        this.setData({
+          canvasWidth: finalWidth,
+          canvasHeight: finalHeight
+        }, () => {
+          // 4. 获取Canvas节点并绘制图片
+          const query = wx.createSelectorQuery().in(this);
+          query.select('#compressCanvas').fields({ node: true, size: true }).exec((res) => {
+            if (!res || !res[0] || !res[0].node) {
+              reject(new Error('未找到compressCanvas节点'));
+              return;
+            }
+
+            const canvas = res[0].node;
+            const ctx = canvas.getContext('2d');
+            // 设置Canvas实际渲染尺寸（关键：和显示尺寸一致）
+            canvas.width = finalWidth;
+            canvas.height = finalHeight;
+
+            // 5. 创建图片并绘制到Canvas
+            const img = canvas.createImage();
+            img.onload = () => {
+              // 清空画布并绘制缩放后的图片
+              ctx.clearRect(0, 0, finalWidth, finalHeight);
+              ctx.drawImage(img, 0, 0, finalWidth, finalHeight);
+
+              // 6. 关键修复：使用wx.canvasToTempFilePath（而非Canvas实例的toTempFilePath）
+              wx.canvasToTempFilePath({
+                canvas: canvas, // 传入Canvas节点
+                quality: 0.1, // 0-1，对应70%质量
+                fileType: 'jpg', // iOS优先jpg，体积更小
+                success: (res) => {
+                  resolve(res.tempFilePath); // 返回缩略图路径
+                },
+                fail: (err) => {
+                  reject(new Error(`Canvas导出失败：${err.errMsg}`));
+                },
+                // 必须指定Canvas所属的上下文（当前页面）
+                complete: null,
+                // 兼容低版本：指定canvasId（可选）
+                canvasId: 'compressCanvas'
+              }, this); // 关键：第二个参数传this，指向页面实例
+            };
+
+            img.onerror = (err) => {
+              reject(new Error(`图片加载失败：${err}`));
+            };
+            img.src = tempFilePath;
+          });
+        });
+      },
+      fail: (err) => {
+        reject(new Error(`获取图片信息失败：${err.errMsg}`));
+      }
     });
   });
 },

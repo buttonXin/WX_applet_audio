@@ -3,6 +3,15 @@
   background: linear-gradient(180deg, #fff 0%, #fff 100%);
 }
 
+.hidden-canvas {
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  z-index: -1;
+  /* 禁止交互，避免影响页面 */
+  pointer-events: none;
+}
+
 /* 单选框组 */
 .radio-group {
   width: 100%;
