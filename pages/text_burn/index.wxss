@@ -21,8 +21,7 @@
   box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.06);
   /* 可以设置最小高度 */
   min-height: 80rpx; /* 设置一个最小高度，避免过于紧凑 */
-  /* 通常 textarea 会自带边框，如果需要自定义边框，可以加 */
-  /* border: 1rpx solid #ccc; */
+  overflow-y: hidden; /* 隐藏垂直滚动条 */
 }
 
 .burn-btn { width: 100%; margin-top: 50rpx;}

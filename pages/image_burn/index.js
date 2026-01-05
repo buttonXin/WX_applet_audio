@@ -47,7 +47,7 @@ Page({
         { value: 'one_destroy', label: '仅一人可查看，查看完后销毁' },
         { value: 'all', label: '所有人可查看' }
       ],
-      selectedMode: 'all_3s'  // 默认选择第一个
+      selectedMode: 'all_3s',  // 默认选择第一个
 
     },
 
@@ -100,9 +100,11 @@ Page({
 
     onLoad(){
       const coverImage = wx.getStorageSync('coverImage');
-      console.log('coverImage='+coverImage)
+      const share_image_mode = wx.getStorageSync('share_image_mode');
+      console.log('coverImage='+coverImage + ', share_image_mode='+ share_image_mode)
       // 默认开启封面
-      this.setData({ canShare: this.canShare() , coverImage: coverImage|| true });
+      this.setData({ canShare: this.canShare() , coverImage: coverImage|| true ,
+         selectedMode: share_image_mode || 'all_3s'});
 
     },
 
@@ -112,30 +114,32 @@ Page({
       selectedMode: e.detail.value
     });
     console.log('当前选择模式:', e.detail.value);
+    // 存储选择的模式
+    wx.setStorageSync('share_image_mode', e.detail.value);
   },
 
-     // 按钮点击处理
-      handleButtonTap() {
-        console.log('click',JSON.stringify(this.data));
-        if (!this.canShare()) {
-          this.setData({ canShare: false ,shareText:'' });
-          wx.showToast({ title: `每天只能分享${MAX_SHARE_COUNT}次`, icon: 'none' });
-          return
-        }
+  // 按钮点击处理
+  handleButtonTap() {
+    console.log('click',JSON.stringify(this.data));
+    if (!this.canShare()) {
+      this.setData({ canShare: false ,shareText:'' });
+      wx.showToast({ title: `每天只能分享${MAX_SHARE_COUNT}次`, icon: 'none' });
+      return
+    }
 
-        if (this.data.isUploaded) {
-          // 已上传完成，分享功能由 open-type="share" 处理
-          return;
-        }
+    if (this.data.isUploaded) {
+      // 已上传完成，分享功能由 open-type="share" 处理
+      return;
+    }
 
-        if (this.data.imagePath) {
-          // 已选择图片但未上传，执行上传
-          this.uploadImage();
-        } else {
-          // 未选择图片，执行选择
-          this.chooseImage();
-        }
-      },
+    if (this.data.imagePath) {
+      // 已选择图片但未上传，执行上传
+      this.uploadImage();
+    } else {
+      // 未选择图片，执行选择
+      this.chooseImage();
+    }
+  },
 
   // 选择图片
     chooseImage() {
