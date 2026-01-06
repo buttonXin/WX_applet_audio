@@ -332,6 +332,8 @@ Page({
       if (res.statusCode === 200) {
         console.log("audio path = "+ res.tempFilePath)
         this.setData({imageUrl: res.tempFilePath})
+        this.previewImage();
+        
         this.initModeLogic();
 
       }else{

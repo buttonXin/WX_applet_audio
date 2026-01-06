@@ -85,3 +85,6 @@
   border: none;
   color: #19A318FF;
 }
+
+.wx_check { white-space: pre-line; text-align: center; font-size: 24rpx; color: #333; font-family: monospace; }
+

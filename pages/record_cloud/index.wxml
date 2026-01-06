@@ -75,7 +75,7 @@
     >
       <text>仅可查看一次</text>
     </button>
-    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听</view>
+    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听. \n链接有效期2天, 2天后自动失效</view>
   </view>
 </view>
 

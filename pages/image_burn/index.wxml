@@ -43,7 +43,7 @@
     <text wx:else class="placeholder-text">点击图片取消</text>
 
   </view>
-  
+
   <!-- 操作按钮 -->
   <button 
     class="action-btn" 
@@ -54,4 +54,5 @@
   >
     {{buttonText}}
   </button>
+  <view class="wx_check">链接有效期2天, 2天后自动失效</view>
 </view>

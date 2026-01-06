@@ -38,7 +38,7 @@
 .danger { background: #ff6b6b; color: #fff; border: none; }
 
 /* 分享菜单遮罩 */
-.wx_check { margin-top: 10rpx; margin-bottom: 10rpx;text-align: center; font-size: 24rpx; color: #333; font-family: monospace; }
+.wx_check { white-space: pre-line; margin-top: 10rpx; margin-bottom: 10rpx;text-align: center; font-size: 24rpx; color: #333; font-family: monospace; }
 .share-mask {
   position: fixed;
   top: 0;
