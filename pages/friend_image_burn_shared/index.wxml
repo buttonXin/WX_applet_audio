@@ -49,6 +49,12 @@
   <view class="preview-close-btn" bindtap="closeFullScreenPreview" catchtap="">
     <text>×</text>
   </view>
+
+    <!-- 倒计时区域（5/10秒模式显示，未销毁时展示） -->
+    <view class="countdown-wrap-inner" wx:if="{{showCountdown && !isDestroyed}}">
+      <text class="countdown-text">剩余查看时间：{{countdown}} 秒</text>
+    </view>
+  
 </view>
 
   <!-- ========== 新增：previewCanvas  wx:if="{{isIos}}" 节点（用于绘制水印） ========== -->

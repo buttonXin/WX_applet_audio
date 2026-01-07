@@ -9,6 +9,17 @@
   margin-bottom: 20rpx;
 }
 
+/* 倒计时区域 */
+.countdown-wrap-inner {
+  position: fixed; /* 脱离文档流，不被预览层覆盖 */
+  top: 20rpx; /* 固定在顶部 */
+  text-align: center;
+  margin-bottom: 20rpx;
+  z-index: 99999 !important; /* 高于预览层（9999）和Canvas（99998） */
+  background: rgba(255,255,255,0.8); /* 加半透明背景，保证文字可读性 */
+  padding: 10rpx 0;
+}
+
 .countdown-text {
   font-size: 28rpx;
   color: #1c1514;
@@ -36,13 +47,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 100rpx; /* 增加点击区域 */
+  padding: 140rpx; /* 增加点击区域 */
   /* border: 1rpx solid #e7e7e7; */
 }
 
 .placeholder-text {
-  font-size: 32rpx;
-  color: #999;
+  font-size: 50rpx;
+  color: #000000;
 }
 
 
