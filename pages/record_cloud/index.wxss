@@ -4,17 +4,16 @@
 .hero { margin-top: 12rpx; }
 .title { font-size: 38rpx; font-weight: 700; color: #0b5132; }
 .subtitle { display: block; margin-top: 8rpx; color: #5f776a; }
-.icon-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 20rpx;
-}
-
-.info-icon {
-  margin-left: auto;
-  padding: 20rpx;
+/* SVG设置图标样式，和原info-icon保持一致 */
+.svg-setting-icon {
+  width: 30px;    /* 和原icon的size="20"一致 */
+  height: 30px;   /* 固定高度，保证和宽度一致 */
+  /* 可选：调整SVG颜色（仅对单色SVG生效） */
+  tint-color: #4a97e9;  /* 替换为原icon的color="#007aff" */
+  /* 可选：增加点击区域，提升交互体验 */
+  padding: 4rpx;
+  box-sizing: content-box;
+  margin-top: 20rpx;
 }
 .last { margin-top: 200rpx; }
 .label { color: #5f776a; }

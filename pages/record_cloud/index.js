@@ -108,6 +108,7 @@ Page({
       if (res.result.isDeveloper) {
         this.setData({ isDeveloper: true });
         wx.showToast({ title: "开发者模式已激活", icon: "success" });
+        wx.setStorageSync('is_developer' , true);
       } else {
         setTimeout(() => wx.showToast({ title: "无权限", icon: "none" }), 300);
         
@@ -124,7 +125,10 @@ Page({
   },
 
   onLoad() {
-
+    const is_developer = wx.getStorageSync('is_developer') || false;
+    if(is_developer){
+      this.setData({ isDeveloper: true });
+    }
     let home_type = wx.getStorageSync('home_type');
     
     console.log("111 home_type ="+home_type);
@@ -136,6 +140,8 @@ Page({
       wx.navigateTo({ url: '/pages/text_burn/index' });
     }else if(home_type === '3'){
       wx.navigateTo({ url: '/pages/image_burn/index' });
+    }else if(home_type === '4'){
+      wx.navigateTo({ url: '/pages/pic_text/index' });
     }
 
 

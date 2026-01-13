@@ -2,15 +2,15 @@
   <view class="top">
     <text class="slogan">人类的本质是复读机-.-</text>
     <view class="hero">
-      <text class="title" bindtap="onTitleClick" >开始录音</text>
-      <text class="subtitle">{{recording ? '录音中...' : '点击开始录音'}}</text>
-        <icon 
-          type="info_circle" 
-          size="20" 
-          color="#007aff" 
-          class="info-icon"
-          bindtap="showIconPopup"
-        ></icon>
+      <!-- <text class="title" bindtap="onTitleClick" >开始录音</text> -->
+      <text class="subtitle" bindtap="onTitleClick" >{{recording ? '录音中...' : '点击开始录音'}}</text>
+      <!-- 替换为SVG设置图标 -->
+        <image 
+          src="/assets/setting.svg"  
+          mode="widthFix"           
+          class="svg-setting-icon"   
+          bindtap="showIconPopup"   
+        />
     </view>
   </view>
 

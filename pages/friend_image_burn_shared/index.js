@@ -548,7 +548,7 @@ enableVisualProtection() {
      ctx.rotate(rotateAngle);
 
      // 1. 定义渐变水印文字内容
-     const watermarkText = "仅本人查看 禁止截屏";
+     const watermarkText = "仅本人查看";
      // 2. 计算单组文字宽度（用于设置步长，避免叠加）
      const singleTextWidth = ctx.measureText(watermarkText).width;
      // 3. 设置步长（关键：步长>文字宽度，确保铺开）
@@ -589,9 +589,9 @@ enableVisualProtection() {
       x + textWidth, y + fontSize / 2
     );
     // 3. 配置渐变颜色（低透明度，肉眼不可见，截屏可见）
-    gradient.addColorStop(0, "rgba(255, 0, 0, 0.3)"); // 起始色：浅红
-    gradient.addColorStop(0.4, "rgba(0, 255, 0, 0.3)"); // 中间色：浅绿
-    gradient.addColorStop(0.8, "rgba(0, 0, 255, 0.3)"); // 结束色：浅蓝
+    gradient.addColorStop(0, "rgba(0, 0, 0, 0.2)"); // 起始色：浅红
+    gradient.addColorStop(0.4, "rgba(0, 255, 0, 0.2)"); // 中间色：浅绿
+    gradient.addColorStop(0.8, "rgba(0, 0, 150, 0.2)"); // 结束色：浅蓝
 
     // 4. 设置渐变填充并绘制文字
     ctx.fillStyle = gradient;

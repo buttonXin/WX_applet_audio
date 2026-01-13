@@ -1,0 +1,33 @@
+<view class="page">
+  <!-- <view class="share-title">{{pageTitle}}</view> -->
+
+  <scroll-view class="feed" scroll-y>
+    <block wx:for="{{feedList}}" wx:key="id">
+      <view wx:if="{{item.type === 'text'}}" class="card text-card">{{item.content}}</view>
+
+      <view wx:elif="{{item.type === 'media'}}"
+        class="card media-card"
+        data-id="{{item.id}}"
+        bindtap="onPreviewMedia">
+        <image wx:if="{{item.mediaType === 'image'}}"
+          class="media-img"
+          mode="widthFix"
+          src="{{item.tempUrl}}" />
+          
+        <view wx:else class="video-preview">
+          <image class="media-img" mode="aspectFill" src="{{item.poster}}" wx:if="{{item.poster}}"></image>
+          <view class="video-mask">
+            <text class="video-icon">▶</text>
+            <text class="video-tips">点击播放/全屏</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{!feedList.length}}" class="empty">暂无分享内容</view>
+  </scroll-view>
+
+  <view class="fab">
+    <button class="fab-btn share"   bindtap="onShare">我也分享一个</button>
+  </view>
+</view>

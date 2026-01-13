@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="header">
+    <text class="header-title">{{pageTitle}}</text>
+    <button class="title-btn" size="mini" bindtap="onChangeTitle">更换标题</button>
+  </view>
+
+  <scroll-view class="feed" scroll-y>
+    <block wx:for="{{feedList}}" wx:key="id">
+      <view wx:if="{{item.type === 'text'}}" class="card text-card">{{item.content}}</view>
+
+      <view wx:elif="{{item.type === 'media'}}"
+        class="card media-card"
+        data-id="{{item.id}}"
+        bindtap="onPreviewMedia">
+        <image wx:if="{{item.mediaType === 'image'}}"
+          class="media-img"
+          mode="widthFix"
+          src="{{item.url}}"
+          lazy-load />
+        <view wx:else class="video-preview">
+          <image class="media-img" mode="aspectFill" src="{{item.poster}}" wx:if="{{item.poster}}"></image>
+          <view class="video-mask">
+            <text class="video-icon">▶</text>
+            <text class="video-tips">点击播放/全屏</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{!feedList.length}}" class="empty">还没有内容，点击下方按钮添加</view>
+  </scroll-view>
+
+  <view class="fab">
+    <button class="fab-btn solid" bindtap="onAddText">添加文字</button>
+    <button class="fab-btn ghost" bindtap="onAddMedia">图片/视频</button>
+    <button class="fab-btn share"  open-type="share" bindtap="onShare">分享</button>
+  </view>
+</view>

@@ -16,7 +16,15 @@ Page({
 
   onLoad() {
     let home_type = wx.getStorageSync('home_type');
-    
+    const is_developer = wx.getStorageSync('is_developer') || false;
+    if(is_developer){
+      this.setData({ viewModes: [
+        { value: '1', label: '音频模式 (默认)' },
+        { value: '2', label: '文字模式 (点击打开)' },
+        { value: '3', label: '图片模式 (点击打开)' },
+        { value: '4', label: '图文模式 (点击打开)' }
+      ] });
+    }
     console.log("home_type ="+home_type);
     if(!home_type){
       home_type = '1';
@@ -37,18 +45,21 @@ Page({
       wx.setStorageSync('home_type', e.detail.value);
       console.log('当前选择模式:', e.detail.value);
     },
- // 处理 radio-item 的点击事件
- onRadioItemClick(e) {
-  const value = e.currentTarget.dataset.value; // 获取 data-value
-  const label = e.currentTarget.dataset.label; // 获取 data-label (可选)
-  console.log('点击了选项:', label, '值为:', value);
-  if(value === '2'){
-    wx.navigateTo({ url: '/pages/text_burn/index' });
-  }else if(value === '3'){
-    wx.navigateTo({ url: '/pages/image_burn/index' });
-  }
+    
+  // 处理 radio-item 的点击事件
+  onRadioItemClick(e) {
+    const value = e.currentTarget.dataset.value; // 获取 data-value
+    const label = e.currentTarget.dataset.label; // 获取 data-label (可选)
+    console.log('点击了选项:', label, '值为:', value);
+    if(value === '2'){
+      wx.navigateTo({ url: '/pages/text_burn/index' });
+    }else if(value === '3'){
+      wx.navigateTo({ url: '/pages/image_burn/index' });
+    }else if(value === '4'){
+      wx.navigateTo({ url: '/pages/pic_text/index' });
+    }
 
- },
+  },
 
   onTextBurnPage(){
     wx.navigateTo({ url: '/pages/text_burn/index' });

@@ -1,0 +1,10 @@
+@import '../pic_text/index.wxss';
+
+.share-title {
+  text-align: center;
+  padding: 32rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
