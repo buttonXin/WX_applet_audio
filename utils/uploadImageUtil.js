@@ -55,7 +55,7 @@ export async function uploadToCloud() {
         wx.cloud.getTempFileURL({
           fileList: [{
             fileID: fileID, // 替换为实际的文件ID
-            maxAge: 7200 // 明确设置有效期為7200秒（2小时）
+            maxAge: 24 * 60 * 60 // 明确设置有效期為xx秒（24小时）
           }],
           success: res => {
             // 成功获取到临时链接
