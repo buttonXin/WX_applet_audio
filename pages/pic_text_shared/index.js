@@ -20,7 +20,9 @@ Page({
       videoAd = wx.createRewardedVideoAd({
         adUnitId: 'adunit-94a52f7929c09dfb'
       })
-      videoAd.onLoad(() => {})
+      videoAd.onLoad(() => {
+       console.log('激励视频广告，onLoad')
+      })
       videoAd.onError((err) => {
         console.error('激励视频广告加载失败', err)
       })
@@ -204,6 +206,27 @@ Page({
           .then(() => videoAd.show())
           .catch(err => {
             console.error('激励视频 广告显示失败', err)
+            wx.showModal({
+                  title: '提示',
+                  content: `广告加载失败, 是否直接查看?`,
+                  confirmText: '确定',
+                  cancelText: '取消',
+                  success: (modalRes) => {
+                    if (modalRes.confirm) {
+                      console.log('用户点击ok');
+                       this.setData({feedList: this.data.originFeedList});
+                    } else if (modalRes.cancel) {
+                      console.log('用户点击了cancel');
+                    }
+                  },
+                  fail: (err) => {
+                    console.error('showModal 失败:', err);
+                    wx.showToast({
+                      title: '弹窗显示失败',
+                      icon: 'none'
+                    });
+                  }
+                });
           })
       })
     }
