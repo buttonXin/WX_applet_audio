@@ -102,6 +102,17 @@ page {
   padding: 0 32rpx;
   box-sizing: border-box;
 }
+.fab2 {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 150rpx;
+  display: flex;
+  justify-content: center;
+  gap: 24rpx;
+  padding: 0 32rpx;
+  box-sizing: border-box;
+}
 
 .fab-btn {
   flex: 1;
