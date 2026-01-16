@@ -6,6 +6,7 @@
       <text class="subtitle" bindtap="onTitleClick" >{{recording ? '录音中...' : '点击开始录音'}}</text>
       <!-- 替换为SVG设置图标 -->
         <image 
+          wx:if="{{isDeveloper}}"
           src="/assets/setting.svg"  
           mode="widthFix"           
           class="svg-setting-icon"   
