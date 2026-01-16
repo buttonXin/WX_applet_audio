@@ -7,6 +7,7 @@ Page({
   data: {
     pageTitle: '吃瓜',
     feedList: [],
+    uuid: generateUUID(),
   },
 
   askForText({ title, placeholder, onConfirm }) {
@@ -75,6 +76,7 @@ Page({
           burn:  1, 
           traceId: 'not save',  // 保存追踪ID
           checkStatus: 'pending',             // pending/pass/reject
+          uuid : this.data.uuid,
           createTime: db.serverDate()
         }
       });
@@ -110,7 +112,7 @@ Page({
   buildSharePayload() {
     const payload = {
       title: this.data.pageTitle,
-      uuid: generateUUID(),
+      uuid: this.data.uuid,
       feedList: this.data.feedList
     };
     console.log("payload000 = ", JSON.stringify(payload))

@@ -4,6 +4,7 @@ import {
 
 // 在页面中定义激励视频广告
 let videoAd = null
+let videoAdSmile = null
 
 Page({
   data: {
@@ -11,11 +12,17 @@ Page({
     feedList: [],
     originFeedList: [], // 占位使用
      currentUuid: '', // 存储当前payload的uuid
+     showSmileBtn: true, //默认显示开心一刻
+     // 自定义弹窗相关
+     smileTitle: '开心一刻',
+    showCustomModal: false, // 是否显示自定义底部弹窗
+    processedText: '', // 处理后的文本
   },
 
   onLoad(options) {
     if (!options || !options.payload) return;
-    
+
+    // 吃瓜图文广告
     if (wx.createRewardedVideoAd) {
       videoAd = wx.createRewardedVideoAd({
         adUnitId: 'adunit-94a52f7929c09dfb'
@@ -45,6 +52,34 @@ Page({
         }
       })
     }
+
+    // 开心一刻广告
+    if (wx.createRewardedVideoAd) {
+          videoAdSmile = wx.createRewardedVideoAd({
+            adUnitId: 'adunit-1afc7667f02b4124'
+          })
+          videoAdSmile.onLoad(() => {
+           console.log('激励视频广告，onLoad')
+          })
+          videoAdSmile.onError((err) => {
+            console.error('激励视频广告加载失败', err)
+          })
+          videoAdSmile.onClose((res) => {
+            // 用户点击了【关闭广告】按钮
+            if (res && res.isEnded) {
+              // 正常播放结束，标记当日已解锁
+              console.log('正常播放结束，可以下发游戏奖励')
+            this.addSmileCount(10);
+            wx.showToast({ title: '已增加使用次数～'});
+          // 自动触发一次开心一刻
+            this.onDaySmile();
+
+            } else {
+              // 播放中途退出，不下发游戏奖励
+              console.log('播放中途退出，不下发游戏奖励')
+            }
+          })
+        }
     
     try {
       const payload = JSON.parse(decodeURIComponent(options.payload));
@@ -321,5 +356,211 @@ Page({
       })),
       current
     });
+  },
+
+  // ========== 开心一刻次数管理逻辑（新增） ==========
+  /**
+   * 获取当日开心一刻存储的根Key
+   */
+  getSmileTodayKey() {
+    const now = new Date();
+    const dateStr = now.getFullYear() +
+                    String(now.getMonth() + 1).padStart(2, '0') +
+                    String(now.getDate()).padStart(2, '0');
+    return `smile_count_${dateStr}`;
+  },
+
+  /**
+   * 获取当日开心一刻剩余次数
+   * @returns {Object} { remain: 剩余次数, total: 今日总使用次数 }
+   */
+  getSmileCount() {
+    const smileKey = this.getSmileTodayKey();
+    const defaultCount = { remain: 5, total: 0 }; // 初始5次免费
+    try {
+      const count = wx.getStorageSync(smileKey) || defaultCount;
+      return { ...defaultCount, ...count };
+    } catch (err) {
+      console.error('读取开心一刻次数失败', err);
+      return defaultCount;
+    }
+  },
+
+  /**
+   * 更新开心一刻次数
+   * @param {Number} num 要增加/减少的次数（负数为减少）
+   */
+  updateSmileCount(num) {
+    const smileKey = this.getSmileTodayKey();
+    const count = this.getSmileCount();
+
+    // 更新剩余次数和总次数
+    count.remain += num;
+    count.total = num > 0 ? count.total : count.total + 1; // 只有使用次数时总次数增加
+
+    // 限制剩余次数不超过当前可解锁上限，总次数不超过30
+    count.remain = Math.min(count.remain, 30 - count.total);
+    count.total = Math.min(count.total, 30);
+
+    wx.setStorageSync(smileKey, count);
+  },
+
+  /**
+   * 增加开心一刻次数（广告解锁）
+   * @param {Number} num 要增加的次数
+   */
+  addSmileCount(num) {
+    this.updateSmileCount(num);
+  },
+
+  /**
+   * 减少开心一刻次数（使用一次）
+   * @returns {Boolean} 是否成功减少（次数足够）
+   */
+  reduceSmileCount() {
+    const count = this.getSmileCount();
+    console.log("count=",JSON.stringify(count));
+    // 总次数达30次，直接返回失败
+    if (count.total >= 30) return false;
+    // 剩余次数>0，减少次数
+    if (count.remain > 0) {
+      this.updateSmileCount(-1);
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * 校验开心一刻次数是否可用
+   * @returns {Number} 0-可用 1-需看广告 2-今日上限
+   */
+  checkSmileCountStatus() {
+    const count = this.getSmileCount();
+    // 总次数达30，返回上限
+    if (count.total >= 30) return 2;
+    // 剩余次数>0，返回可用
+    if (count.remain > 0) return 0;
+    // 剩余次数=0且总次数<30，返回需广告
+    return 1;
+  },
+
+  /**
+   * 显示开心一刻广告弹窗
+   */
+  showSmileAdModal() {
+    wx.showModal({
+      title: '提示',
+      content: '今日开心一刻免费次数已用完，观看广告可增加使用次数',
+      confirmText: '观看广告',
+      cancelText: '取消',
+      success: (res) => {
+        if (res.confirm) {
+          this.onShowSmileAD();
+        }
+      }
+    });
+  },
+
+// 展示开心一刻广告
+  onShowSmileAD(){
+  // 用户触发广告后，显示激励视频广告
+  if (videoAdSmile) {
+    videoAdSmile.show().catch(() => {
+      // 失败重试
+      videoAdSmile.load()
+        .then(() => videoAdSmile.show())
+        .catch(err => {
+          console.error('激励视频 广告显示失败', err)
+          wx.showModal({
+                title: '提示',
+                content: `广告加载失败, 是否直接查看?`,
+                confirmText: '确定',
+                cancelText: '取消',
+                success: (modalRes) => {
+                  if (modalRes.confirm) {
+                    console.log('用户点击ok');
+
+
+                  } else if (modalRes.cancel) {
+                    console.log('用户点击了cancel');
+                  }
+                },
+                fail: (err) => {
+                  console.error('showModal 失败:', err);
+                  wx.showToast({
+                    title: '弹窗显示失败',
+                    icon: 'none'
+                  });
+                }
+              });
+        })
+    })
   }
+},
+
+  /// 开心一刻
+  async onDaySmile(){
+    // 1. 校验次数状态
+      const status = this.checkSmileCountStatus();
+      // 状态2：今日上限
+      if (status === 2) {
+        wx.showToast({ title: '今日开心一刻次数已达上限（30次）', icon: 'none' });
+        return;
+      }
+      // 状态1：需看广告
+      if (status === 1) {
+        this.showSmileAdModal();
+        return;
+      }
+
+      // 状态0：次数可用，减少一次
+      const canUse = this.reduceSmileCount();
+      if (!canUse) {
+        wx.showToast({ title: '次数不足，请稍后再试', icon: 'none' });
+        return;
+      }
+
+    wx.showLoading({ title: '加载中...' }) // 提示用户等待
+
+
+    try{
+     // 1. 定义模式映射
+      const modeMap = {
+        1: '冷笑话',
+        2: '普通笑话',
+        3: '浪漫情话',
+        4: '土味情话',
+        5: '心灵鸡汤'
+      }
+
+      // 2. 随机生成模式（或者从event中获取，这里保持随机）
+      const randomMode = Math.floor(Math.random() * 5) + 1
+      const modeText = modeMap[randomMode]
+      // 创建模型
+     const model = wx.cloud.extend.AI.createModel("hunyuan-exp");
+     const res = await model.generateText({
+       model: "hunyuan-turbos-latest",
+       messages: [{ role: "user", content: "生成一个开心一刻: " + modeText }],
+     });
+     console.log("内容=",JSON.stringify(res));
+     wx.hideLoading()
+    const text = res.choices[0].message.content;
+    // 核心：移除所有*号，保留换行
+    const processedText = text.replace(/\*/g, '');
+    console.log("内容= text = " + processedText);
+     // 隐藏按钮
+    //  this.setData({ showSmileBtn: false });
+
+     this.setData({processedText, showCustomModal: true , smileTitle: modeText});
+
+    } catch (e) {
+      console.error(e);
+      wx.hideLoading()
+      wx.showToast({ icon: 'none', title: '获取失败' })
+    }
+  },
+  // 关闭自定义弹窗
+  closeCustomModal() {
+    this.setData({ showCustomModal: false });
+  },
 });
