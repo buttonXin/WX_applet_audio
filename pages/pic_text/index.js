@@ -113,7 +113,8 @@ Page({
     const payload = {
       title: this.data.pageTitle,
       uuid: this.data.uuid,
-      feedList: this.data.feedList
+      feedList: this.data.feedList,
+      shareTime: Date.now()
     };
     console.log("payload000 = ", JSON.stringify(payload))
     return encodeURIComponent(JSON.stringify(payload));

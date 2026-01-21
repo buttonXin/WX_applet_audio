@@ -26,7 +26,12 @@ const MAX_SIZE = 3 * 1024 * 1024;
  */
 export async function uploadToCloud() {
   // const {  filePath } = options;
-  const { filePath ,  fileType ,tempFile} = await chooseImage()
+  // 云端获取数据来配置
+  const getTimeCount = await wx.cloud.callFunction({name: 'getTimeCount' })
+   
+  const { pic_text_total_time, pic_text_video_size, pic_text_video_time } = getTimeCount.result;
+    
+  const { filePath ,  fileType ,tempFile} = await chooseImage(pic_text_video_size, pic_text_video_time)
   wx.showLoading({ title: '上传中...', mask: true });
   let cloudPath ;
   if(fileType === 'image'){
@@ -55,7 +60,7 @@ export async function uploadToCloud() {
         wx.cloud.getTempFileURL({
           fileList: [{
             fileID: fileID, // 替换为实际的文件ID
-            maxAge: 24 * 60 * 60 // 明确设置有效期為xx秒（24小时）
+            maxAge: pic_text_total_time || 24 * 60 * 60 // 明确设置有效期為xx秒（24小时）
           }],
           success: res => {
             // 成功获取到临时链接
@@ -101,7 +106,7 @@ export function isGifFile(filePath) {
  * 选择图片的快捷方法（可选封装）
  * @returns {Promise<string>} 选中的图片临时路径
  */
-export function chooseImage() {
+export function chooseImage(pic_text_video_size, pic_text_video_time) {
   return new Promise((resolve, reject) => {
     wx.chooseMedia({
       count: 1,
@@ -128,10 +133,10 @@ export function chooseImage() {
         }
         // ... 后续图片压缩、上传逻辑
       } else if (fileType === 'video') {
-        // 新增视频处理逻辑（示例）
+        // 新增视频处理逻辑（示例）pic_text_video_size, pic_text_video_time
         // 视频大小/时长限制、缩略图生成等
-        const maxVideoSize = 20 * 1024 * 1024; // 视频最大10M
-        const maxVideoDuration = 60; // 视频最长60秒
+        const maxVideoSize = pic_text_video_size || 20 * 1024 * 1024; // 视频最大10M
+        const maxVideoDuration = pic_text_video_time || 120; // 视频最长60秒
         if (tempFile.size > maxVideoSize) {
           wx.showToast({ title: '视频太大了，不能超过10M', icon: 'none' });
           return;

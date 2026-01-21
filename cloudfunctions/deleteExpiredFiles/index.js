@@ -9,8 +9,8 @@ const CONFIG = {
   FILE_FIELD: 'fileID',           // 存储文件ID的字段名
   LOG_COLLECTION: 'fileDeleteLogs',// 日志集合名
   EXPIRE_HOURS: 24 * 2,               // 过期时间：12小时
-  PAGE_SIZE: 50,                  // 分页查询：每次查50条
-  BATCH_DELETE_SIZE: 20           // 批量删除：每次删20个
+  PAGE_SIZE: 20,                  // 分页查询：每次查50条
+  BATCH_DELETE_SIZE: 5           // 批量删除：每次删20个
 };
 
 // 核心工具函数：校验文件是否存在
@@ -54,21 +54,20 @@ exports.main = async (event, context) => {
     let skip = 0;
 
     console.log("start = ");
-    while (hasMore && skip < 1000) {
+    // while (hasMore && skip < 1000) {
       const dbRes = await db.collection(CONFIG.DB_COLLECTION)
         .where({
           createTime: _.lt(expireTime),
           [CONFIG.FILE_FIELD]: _.exists(true)
         })
         .field({ _id: true, [CONFIG.FILE_FIELD]: true }) // 取数据库_id和fileID
-        .skip(skip)
-        .limit(CONFIG.PAGE_SIZE)
+        .limit(CONFIG.PAGE_SIZE)  // 关键修改：只取20条
         .get();
 
       expireRecords = expireRecords.concat(dbRes.data);
       hasMore = dbRes.data.length === CONFIG.PAGE_SIZE;
       skip += CONFIG.PAGE_SIZE;
-    }
+    // }
     console.log("expireRecords size = "+ expireRecords.length);
 
     if (expireRecords.length === 0) {

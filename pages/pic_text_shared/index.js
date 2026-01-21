@@ -5,6 +5,7 @@ import {
 // 在页面中定义激励视频广告
 let videoAd = null
 let videoAdSmile = null
+const warnText = '素材来源于网络，谨慎辨别 \n理性恰呱！一切以官方报道为准！'
 
 Page({
   data: {
@@ -19,6 +20,7 @@ Page({
     showCustomModal: false, // 是否显示自定义底部弹窗
     processedText: '', // 处理后的文本
     adType: 1, // 广告类型 1 分享, 2 开心一刻
+    
   },
 
   onLoad(options) {
@@ -27,6 +29,23 @@ Page({
     console.log('payload', JSON.parse(decodeURIComponent(options.payload)));
     this.setData({payload: options.payload});
 
+    const now = Date.now()
+    // const time = parseInt(this.data.payload.shareTime);
+    const time = JSON.parse(decodeURIComponent(options.payload)).shareTime;
+    
+    const hoursPassed = 48 - (now - time) / (1000 * 60 * 60)
+    const hours = Math.floor(hoursPassed)
+    console.log('now= ' + now);
+    console.log('time= ' + time);
+    console.log('hours= ' + hours);
+
+    if(hours <=0 ){
+      wx.showToast({ 
+        title: `分享已经过期`, 
+        icon: 'none' 
+      })
+    }
+    
     // 吃瓜图文广告
     if (wx.createRewardedVideoAd) {
       videoAd = wx.createRewardedVideoAd({
@@ -66,16 +85,19 @@ Page({
     }
 
 
- 
-    
     try {
       const payload = JSON.parse(decodeURIComponent(options.payload));
       const initFeedList = payload.feedList || [];
-
+      const entry = {
+        id: `${Date.now()}-${Math.random()}`,
+        type: 'text',
+        content: warnText,
+      };
+      
       // 1. 先立即渲染基础数据，让用户先看到页面结构
       this.setData({
-        originFeedList: initFeedList,
-         currentUuid: payload.uuid // 保存当前uuid
+        originFeedList: [...initFeedList, entry],
+         currentUuid: payload.uuid, // 保存当前uuid
       });
 
       wx.setNavigationBarTitle({
