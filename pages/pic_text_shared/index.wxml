@@ -3,7 +3,13 @@
 
   <scroll-view class="feed" scroll-y>
     <block wx:for="{{feedList}}" wx:key="id">
-      <view wx:if="{{item.type === 'text'}}" class="card text-card">{{item.content}}</view>
+    <view wx:if="{{item.type === 'text'}}" class="card text-card"   >
+    <!-- 可复制的文本 -->
+      <text selectable="true" 
+      user-select="true"
+      space="ensp"
+      decode="false">{{item.content}}</text>
+    </view>
 
       <view wx:elif="{{item.type === 'media'}}"
         class="card media-card"
@@ -29,7 +35,7 @@
 
   <view class="fab">
     <button class="fab-btn share"   bindtap="onDaySmile" wx:if="{{showSmileBtn}}" >开心一刻</button>
-    <button class="fab-btn share"   bindtap="onShare">我也分享一个</button>
+    <button class="fab-btn share"   bindtap="onShare" open-type="share"  >转发</button>
   </view>
 
   <!-- 自定义底部弹窗（方案2） -->
@@ -39,7 +45,10 @@
     <view class="modal-title">{{smileTitle}}</view>
     <!-- 文本内容（支持换行和滚动） -->
     <scroll-view class="modal-text-area" scroll-y>
-      <text class="modal-text">{{processedText}}</text>
+      <text class="modal-text"  selectable="true" 
+      user-select="true"
+      space="ensp"
+      decode="false" >{{processedText}}</text>
     </scroll-view>
     <!-- 关闭按钮 -->
     <button class="modal-close-btn" bindtap="closeCustomModal">关闭</button>

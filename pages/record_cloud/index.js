@@ -3,8 +3,8 @@ const recorder = wx.getRecorderManager();
 const player = wx.createInnerAudioContext();
 
 // 将duration改为30000毫秒（30秒）
-const MAX_DURATION = 30000; // 最大录制时长30秒
-const MAX_SHARE_COUNT = 10; // 每天最大分享次数
+const MAX_DURATION = 5 * 60 * 1000; // 最大录制时长 4分钟
+const MAX_SHARE_COUNT = 5; // 每天最大分享次数
 
 const recOptions = { 
   duration: MAX_DURATION, // 录音最大时长
@@ -137,7 +137,13 @@ Page({
     }
 
     if(home_type === '2'){
-      wx.navigateTo({ url: '/pages/text_burn/index' });
+      // wx.navigateTo({ url: '/pages/text_burn/index' });
+      wx.showModal({
+        title: '提示',
+        content: '文字分享页面暂未开放',
+        showCancel: false,
+        confirmText: '确认'
+      });
     }else if(home_type === '3'){
       wx.navigateTo({ url: '/pages/image_burn/index' });
     }else if(home_type === '4'){

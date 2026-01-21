@@ -52,7 +52,14 @@ Page({
     const label = e.currentTarget.dataset.label; // 获取 data-label (可选)
     console.log('点击了选项:', label, '值为:', value);
     if(value === '2'){
-      wx.navigateTo({ url: '/pages/text_burn/index' });
+      // wx.navigateTo({ url: '/pages/text_burn/index' });
+      wx.showModal({
+        title: '提示',
+        content: '文字分享页面暂未开放',
+        showCancel: false,
+        confirmText: '确认'
+      });
+
     }else if(value === '3'){
       wx.navigateTo({ url: '/pages/image_burn/index' });
     }else if(value === '4'){
@@ -62,7 +69,13 @@ Page({
   },
 
   onTextBurnPage(){
-    wx.navigateTo({ url: '/pages/text_burn/index' });
+    // wx.navigateTo({ url: '/pages/text_burn/index' });
+    wx.showModal({
+      title: '提示',
+      content: '文字分享页面暂未开放',
+      showCancel: false,
+      confirmText: '确认'
+    });
   },
 
   onImageBurnPage(){
@@ -98,7 +111,13 @@ Page({
           // 用户点击确认按钮后的回调
           if (res.confirm) {
             console.log('用户点击了确认');
-            wx.navigateTo({ url: '/pages/text_burn/index' });
+            // wx.navigateTo({ url: '/pages/text_burn/index' });
+            wx.showModal({
+              title: '提示',
+              content: '文字分享页面暂未开放',
+              showCancel: false,
+              confirmText: '确认'
+            });
           }
         },
       });

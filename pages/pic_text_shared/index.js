@@ -8,6 +8,7 @@ let videoAdSmile = null
 
 Page({
   data: {
+    payload: null, // 原始数据, 再次分享使用
     pageTitle: '瓜友分享',
     feedList: [],
     originFeedList: [], // 占位使用
@@ -17,10 +18,14 @@ Page({
      smileTitle: '开心一刻',
     showCustomModal: false, // 是否显示自定义底部弹窗
     processedText: '', // 处理后的文本
+    adType: 1, // 广告类型 1 分享, 2 开心一刻
   },
 
   onLoad(options) {
     if (!options || !options.payload) return;
+
+    console.log('payload', JSON.parse(decodeURIComponent(options.payload)));
+    this.setData({payload: options.payload});
 
     // 吃瓜图文广告
     if (wx.createRewardedVideoAd) {
@@ -37,7 +42,7 @@ Page({
         // 用户点击了【关闭广告】按钮
         if (res && res.isEnded) {
           // 正常播放结束，标记当日已解锁
-          console.log('正常播放结束，可以下发游戏奖励')
+          console.log('正常播放结束，可以下发游戏奖励 this.data.adType=', this.data.adType)
           this.setGlobalUnlockedStatus(true); // 标记解锁
           wx.showToast({ title: '特权到手～'});
 
@@ -46,6 +51,13 @@ Page({
             feedList: this.data.originFeedList,
           });
 
+          if(this.data.adType == 2){
+            // 开心一刻广告
+            this.addSmileCount(7);
+            wx.showToast({ title: '已增加使用次数～'});
+            // 自动触发一次开心一刻
+            this.onDaySmile();
+          }
         } else {
           // 播放中途退出，不下发游戏奖励
           console.log('播放中途退出，不下发游戏奖励')
@@ -53,33 +65,8 @@ Page({
       })
     }
 
-    // 开心一刻广告
-    if (wx.createRewardedVideoAd) {
-          videoAdSmile = wx.createRewardedVideoAd({
-            adUnitId: 'adunit-1afc7667f02b4124'
-          })
-          videoAdSmile.onLoad(() => {
-           console.log('激励视频广告，onLoad')
-          })
-          videoAdSmile.onError((err) => {
-            console.error('激励视频广告加载失败', err)
-          })
-          videoAdSmile.onClose((res) => {
-            // 用户点击了【关闭广告】按钮
-            if (res && res.isEnded) {
-              // 正常播放结束，标记当日已解锁
-              console.log('正常播放结束，可以下发游戏奖励')
-            this.addSmileCount(10);
-            wx.showToast({ title: '已增加使用次数～'});
-          // 自动触发一次开心一刻
-            this.onDaySmile();
 
-            } else {
-              // 播放中途退出，不下发游戏奖励
-              console.log('播放中途退出，不下发游戏奖励')
-            }
-          })
-        }
+ 
     
     try {
       const payload = JSON.parse(decodeURIComponent(options.payload));
@@ -269,6 +256,7 @@ Page({
 
   /// 显示弹窗用户确认后 开始播放广播
   onShowADModal(){
+    this.setData({adType: 1});
     wx.showModal({
       title: '提示',
       content: `只需观看 1 次广告，即可解锁今日吃瓜特权！`,
@@ -332,11 +320,6 @@ Page({
     } finally {
       wx.hideNavigationBarLoading();
     }
-  },
-
-  // 跳转到上传页面
-  onShare() {
-    wx.navigateTo({ url: '/pages/image_burn/index' });
   },
 
   // 预览方法变得非常简单，因为 poster 已经在 onLoad 里准备好了
@@ -448,6 +431,7 @@ Page({
    * 显示开心一刻广告弹窗
    */
   showSmileAdModal() {
+    this.setData({adType: 2});
     wx.showModal({
       title: '提示',
       content: '今日开心一刻免费次数已用完，观看广告可增加使用次数',
@@ -497,6 +481,20 @@ Page({
     })
   }
 },
+
+  // 跳转到上传页面
+  onShare() {
+    // wx.navigateTo({ url: '/pages/image_burn/index' });
+  },
+
+  onShareAppMessage() {
+    const payload = this.data.payload;
+    console.log("payload = ", JSON.stringify(payload))
+    return {
+      title: this.data.pageTitle || '吃瓜',
+      path: `/pages/pic_text_shared/index?payload=${payload}`
+    };
+  },
 
   /// 开心一刻
   async onDaySmile(){
