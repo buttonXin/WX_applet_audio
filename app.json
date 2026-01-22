@@ -5,12 +5,8 @@
     "pages/repeat/index",
     "pages/me/index",
     "pages/friend_shared/index",
-    "pages/friend_text_burn_shared/index",
-    "pages/text_burn/index",
-    "pages/image_burn/index",
     "pages/pic_text/index",
-    "pages/pic_text_shared/index",
-    "pages/friend_image_burn_shared/index"
+    "pages/pic_text_shared/index"
   ],
   "permission": {
     "scope.record": {
