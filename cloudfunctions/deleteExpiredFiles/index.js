@@ -9,7 +9,7 @@ const CONFIG = {
   FILE_FIELD: 'fileID',           // 存储文件ID的字段名
   LOG_COLLECTION: 'fileDeleteLogs',// 日志集合名
   EXPIRE_HOURS: 24 * 2,               // 过期时间：12小时
-  PAGE_SIZE: 20,                  // 分页查询：每次查50条
+  PAGE_SIZE: 10,                  // 分页查询：每次查50条
   BATCH_DELETE_SIZE: 5           // 批量删除：每次删20个
 };
 
