@@ -31,6 +31,10 @@
     </block>
 
     <view wx:if="{{!feedList.length}}" class="empty">暂无分享内容</view>
+    <view class="like-container" bindtap="toggleLike">
+      <text class="like-icon">❤️</text>
+      <text>点赞支持</text>
+    </view>
   </scroll-view>
 
   <view class="fab">

@@ -583,4 +583,28 @@ Page({
   closeCustomModal() {
     this.setData({ showCustomModal: false });
   },
+  toggleLike: function() {
+      wx.showToast({
+        title: '感谢支持 ❤️',
+        icon: 'none',
+        duration: 800
+      })
+      setTimeout(() => {
+        const url = 'https://docs.qq.com/doc/DS2hmSHFFY1VKeFJ6';
+        wx.setClipboardData({
+          data: url,
+          success: () => {
+
+            wx.showModal({
+              title: '操作指引',
+              content: '链接已复制！\n1. 点击微信的搜索\n2. 粘贴链接并访问\n3. 查看完整文档',
+              showCancel: false,
+              confirmText: '知道了'
+            })
+          }
+        })
+      
+      }, 500)
+    
+  },
 });

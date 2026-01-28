@@ -71,3 +71,15 @@
   border-radius: 44rpx;
   font-size: 32rpx;
 }
+
+/* 样式控制 */
+.like-container {
+  display: block;
+  align-items: center;
+  padding: 10rpx;
+}
+
+.like-icon {
+  font-size: 30rpx;
+  margin-right: 10rpx;
+}

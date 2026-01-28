@@ -61,8 +61,9 @@ Page({
     selectedImg:'',
     isFullScreen: false,
     clickCount: 0, // 连续点击计数
-    clickTimer: null // 计数重置定时器
+    clickTimer: null, // 计数重置定时器
 
+    openSetting: false  // 是否打开设置按钮
   },
   
   onHide() {
@@ -119,6 +120,32 @@ Page({
       wx.hideLoading();
     }
   },
+
+    // 校验开发者身份（云函数校验，避免前端泄露）
+    async checkOpenSetting() {
+      // wx.showLoading({ title: "验证中..." });
+      try {
+        // 调用云函数校验openid
+        const res = await wx.cloud.callFunction({
+          name: "checkDeveloper",
+          data: {type: 1}
+        });
+        console.log('callback:openSetting = ', JSON.stringify(res.result.openSetting) )
+        // wx.hideLoading();
+        if (res.result.openSetting) {
+          this.setData({ openSetting: true });
+          // wx.showToast({ title: "已开启设置", icon: "success" });
+          wx.setStorageSync('openSetting' , true);
+        } else {
+          // setTimeout(() => wx.showToast({ title: "无权限", icon: "none" }), 300);
+          
+        }
+      } catch (err) {
+        // wx.showToast({ title: "验证失败", icon: "none" });
+      } finally {
+        // wx.hideLoading();
+      }
+    },
 
   showIconPopup(){
     wx.navigateTo({ url: '/pages/me/index' });
@@ -719,4 +746,29 @@ Page({
       // desc: '包含多个参数的复读机分享'
     };
   },
+
+  toggleLike: function() {
+    wx.showToast({
+      title: '感谢支持 ❤️',
+      icon: 'none',
+      duration: 800
+    })
+    setTimeout(() => {
+      const url = 'https://docs.qq.com/doc/DS2hmSHFFY1VKeFJ6';
+      wx.setClipboardData({
+        data: url,
+        success: () => {
+
+          wx.showModal({
+            title: '操作指引',
+            content: '链接已复制！\n1. 点击微信的搜索\n2. 粘贴链接并访问\n3. 查看完整文档',
+            showCancel: false,
+            confirmText: '知道了'
+          })
+        }
+      })
+    
+    }, 500)
+  
+},
 });
