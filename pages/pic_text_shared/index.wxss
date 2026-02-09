@@ -83,3 +83,21 @@
   font-size: 30rpx;
   margin-right: 10rpx;
 }
+/* 链接样式 */
+.mini-program-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  background-color: #f0f7ff;
+  border-radius: 8rpx;
+  text-decoration: none;
+  margin: 0 4rpx;
+}
+
+.link-content {
+  color: #157ad8;
+  background-color: #f0f7ff;
+  font-weight: 500;
+}
+
+

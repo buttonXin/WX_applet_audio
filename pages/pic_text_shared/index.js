@@ -20,6 +20,7 @@ Page({
     showCustomModal: false, // 是否显示自定义底部弹窗
     processedText: '', // 处理后的文本
     adType: 1, // 广告类型 1 分享, 2 开心一刻
+    item: null
     
   },
 
@@ -100,6 +101,10 @@ Page({
          currentUuid: payload.uuid, // 保存当前uuid
       });
 
+      // 推广内容
+      this.onContentPromotion(this.data.originFeedList);
+
+
       wx.setNavigationBarTitle({
         title: payload.title || '吃瓜'
       });
@@ -114,6 +119,41 @@ Page({
       wx.showToast({ title: '分享数据解析失败', icon: 'none' });
     }
     this.onInitLoad();
+  },
+
+ /// 云端请求内容推广
+  async onContentPromotion(originFeedList){
+
+    try {
+      const db = wx.cloud.database();
+      const res = await (await db.collection("promotion").get()).data[0];
+      console.log('云函数更新数据库:', JSON.stringify(res) )
+      console.log('云函数更新数据库:', JSON.stringify(res.appId) )
+      if(!res.appId) {
+        console.log('云函数更新数据库: 推广没有添加' )
+        return;
+      }
+
+      // const item = {
+      //   appId: res.appId || 'wxd124940fbee66d6f',
+      //   path: res.path || '#小程序://复读机/B3maFay4LkJmc8q',
+      //   extraData: res.extraData || 'from ',
+      //   content: res.content || '点击打开小程序 : 文字放大助手,方便长辈看大字'
+      // };
+      const item = {
+        appId: res.appId ,
+        path: res.path,
+        extraData: res.extraData,
+        content: res.content 
+      };
+
+      
+      // 1. 先立即渲染基础数据，让用户先看到页面结构
+      this.setData({ item: item });
+    }catch(e){
+
+    }
+   
   },
 
   onInitLoad(){

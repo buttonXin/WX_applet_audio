@@ -49,7 +49,7 @@
     </view>
     <text class="empty" wx:else>暂无录音</text>
   </view>
-  <text class="wx_check">最长录制时间:{{maxDuration / 60 / 1000}}分钟</text>
+  <!-- <text class="wx_check">最长录制时间:{{maxDuration / 60 / 1000}}分钟</text> -->
 
   <view class="bottom-bar">
     <view class="timer">{{durationText}}</view>
@@ -81,7 +81,7 @@
     >
       <text>页面关闭后内容不会保存</text>
     </button> -->
-    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听. \n链接有效期2天, 2天后自动失效</view>
+    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听.</view>
   </view>
 </view>
 

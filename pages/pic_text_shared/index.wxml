@@ -18,6 +18,7 @@
         <image wx:if="{{item.mediaType === 'image'}}"
           class="media-img"
           mode="widthFix"
+          lazy-load="{{true}}"
           src="{{item.tempUrl}}" />
           
         <view wx:else class="video-preview">
@@ -31,6 +32,24 @@
     </block>
 
     <view wx:if="{{!feedList.length}}" class="empty">暂无分享内容</view>
+
+    <view  class="link-text">
+          <navigator
+            class="mini-program-link"
+            target="miniProgram"
+            app-id="{{item.appId}}"
+            path="{{item.path}}"
+            extra-data="{{item.extraData}}"
+            version="release"
+            hover-class="navigator-hover"
+            bindsuccess="onNavigateSuccess"
+            bindfail="onNavigateFail"
+          >
+          
+          <text class="link-content">{{item.content}}</text>
+          </navigator>
+        </view>
+        
     <view class="like-container" bindtap="toggleLike">
       <text class="like-icon">❤️</text>
       <text>点赞支持</text>

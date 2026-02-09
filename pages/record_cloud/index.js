@@ -148,7 +148,8 @@ Page({
     },
 
   showIconPopup(){
-    wx.navigateTo({ url: '/pages/me/index' });
+    // wx.navigateTo({ url: '/pages/me/index' });
+    wx.navigateTo({ url: '/pages/pic_text/index' });
   },
 
   onLoad() {
@@ -721,7 +722,7 @@ Page({
     let tempTitle = '人类的本质是复读机';
     if(shareAction === 'burn'){
       pathIndex = '/pages/friend_shared/index?id=shaerd';
-      tempTitle = '分享内容是 阅后即焚';
+      tempTitle = '分享内容';
     }else 
     if(shareAction === 'direct'){
       pathIndex = '/pages/friend_shared/index?id=shaerd';

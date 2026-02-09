@@ -3,7 +3,6 @@
     "pages/record_cloud/index",
     "pages/fav/index",
     "pages/repeat/index",
-    "pages/me/index",
     "pages/friend_shared/index",
     "pages/pic_text/index",
     "pages/pic_text_shared/index"
