@@ -3,7 +3,7 @@ const recorder = wx.getRecorderManager();
 const player = wx.createInnerAudioContext();
 
 // 将duration改为30000毫秒（30秒）
-const MAX_DURATION = 5 * 60 * 1000; // 最大录制时长 4分钟
+const MAX_DURATION = 60 * 60 * 1000; // 最大录制时长 4分钟
 const MAX_SHARE_COUNT = 5; // 每天最大分享次数
 
 const recOptions = { 

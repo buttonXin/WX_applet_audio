@@ -12,3 +12,16 @@
 .actions { padding: 24rpx; display: flex; gap: 12rpx; margin-top: 12rpx; align-items: center; }
 .main { flex: 1; background: #1abc8c; color: #fff; border: none; border-radius: 12rpx; }
 .slider { flex: 1; }
+
+/* 样式控制 */
+.like-container {
+  display: block;
+  align-items: center;
+  margin: 20rpx 0;
+  padding: 10rpx;
+}
+
+.like-icon {
+  font-size: 30rpx;
+  margin-right: 10rpx;
+}
