@@ -1,6 +1,7 @@
-import { 
-  getTempUrlCompress, 
+import {
+  getTempUrlCompress,
 } from '../../utils/uploadImageUtil.js';
+import { applyShareConfig } from '../../utils/shareConfig';
 
 // 在页面中定义激励视频广告
 let videoAd = null
@@ -24,6 +25,8 @@ Page({
   },
 
   onLoad(options) {
+    applyShareConfig(this);
+
     if (!options || !options.payload) return;
 
     console.log('payload', JSON.parse(decodeURIComponent(options.payload)));
@@ -506,7 +509,6 @@ Page({
 
   // 跳转到上传页面
   onShare() {
-    // wx.navigateTo({ url: '/pages/image_burn/index' });
   },
 
   onShareAppMessage() {

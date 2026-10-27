@@ -32,7 +32,7 @@
 
   <view class="fab">
       <button class="fab-btn share" bindtap="onChangeTitle">标题</button>
-      <button class="fab-btn share"  open-type="share" bindtap="onShare">分享</button>
+      <button class="fab-btn share"  open-type="share" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
     </view>
 
   <view class="fab2">

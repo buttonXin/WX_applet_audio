@@ -18,17 +18,17 @@
   
   <view class="divider"></view>
   <view class="title1">录音</view>
-  <view class="title_1">分享时, 先上传到腾讯的后台进行审核后, 其他人才能看到.审核时间一般10到60s.</view>
+  <view class="title_1">录音保存在本机, 收藏后可在复读机中循环/变速播放.</view>
 
   <view class="divider"></view>
   <view class="title2">复读机</view>
   <view class="title_2">需要收藏录音后, 才能使用; 选择的是收藏的录音进行复读.</view>
 
-  <view class="divider"></view>
-  <view class="title3">极简模式</view>
-  <view class="title_3">开启后, 跳转到极简模式页面, 并且后续再次打开小程序时,默认直接跳转到对应页面</view>
-  <view class="title_3">开启后, 弹窗提示说明</view>
-  <view class="title_3">图片与文字模式, 开关同时只能选择一个!</view>
-  
+  <block wx:if="{{enableShare}}">
+    <view class="divider"></view>
+    <view class="title3">图文模式</view>
+    <view class="title_3">开启后, 跳转到图文分享页面, 并且后续再次打开小程序时, 默认直接跳转到该页面</view>
+  </block>
+
 
 </view>

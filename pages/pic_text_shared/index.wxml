@@ -39,7 +39,7 @@
 
   <view class="fab">
     <button class="fab-btn share"   bindtap="onDaySmile" wx:if="{{showSmileBtn}}" >开心一刻</button>
-    <button class="fab-btn share"   bindtap="onShare" open-type="share"  >转发</button>
+    <button class="fab-btn share"   bindtap="onShare" open-type="share" wx:if="{{enableShare}}" >转发</button>
   </view>
 
   <!-- 自定义底部弹窗（方案2） -->

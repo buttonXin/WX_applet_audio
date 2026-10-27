@@ -32,7 +32,7 @@
       <view class="card-actions" wx:if="{{showBurnButtons}}">
         <button class="third-btn" bindtap="onRenameLast" >重命名</button>
         <button class="third-btn primary-ghost" bindtap="onSave" >收藏</button>
-        <button  class="third-btn info-ghost" data-action="direct" open-type="share" bindtap="onShare">分享</button>
+        <button  class="third-btn info-ghost" data-action="direct" open-type="share" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
       </view>
     </view>
   </view>

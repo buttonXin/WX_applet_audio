@@ -17,7 +17,7 @@
         <view class="actions">
       <button class="btn ghost" data-id="{{item.id}}" bindtap="onRename">重命名</button>
       <button class="btn warn" data-id="{{item.id}}" bindtap="onRemove">删除</button>
-      <button class="btn info-ghost" data-id="{{item.id}}" bindtap="onShare">分享</button>
+      <button class="btn info-ghost" data-id="{{item.id}}" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
     </view>
       </view>
     </block>
@@ -27,7 +27,7 @@
 
 
   <!-- 分享菜单弹窗 -->
-<view class="share-mask" wx:if="{{showShareMenu}}" bindtap="hideShareMenu">
+<view class="share-mask" wx:if="{{enableShare && showShareMenu}}" bindtap="hideShareMenu">
   <view class="share-menu" catchtap="">
      <!-- 直接分享 - 使用 button -->
      <button 

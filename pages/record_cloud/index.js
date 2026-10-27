@@ -1,3 +1,5 @@
+import { ENABLE_SHARE, applyShareConfig } from '../../utils/shareConfig';
+
 const app = getApp();
 const recorder = wx.getRecorderManager();
 const player = wx.createInnerAudioContext();
@@ -156,24 +158,17 @@ Page({
     if(is_developer){
       this.setData({ isDeveloper: true });
     }
-    let home_type = wx.getStorageSync('home_type');
-    
-    console.log("111 home_type ="+home_type);
-    if(!home_type){
-      home_type = '1';
-    }
+    applyShareConfig(this);
 
-    if(home_type === '2'){
-      // wx.navigateTo({ url: '/pages/text_burn/index' });
-      wx.showModal({
-        title: '提示',
-        content: '文字分享页面暂未开放',
-        showCancel: false,
-        confirmText: '确认'
-      });
-    }else if(home_type === '3'){
-      wx.navigateTo({ url: '/pages/image_burn/index' });
-    }else if(home_type === '4'){
+    // 首页模式: 1=音频(默认), 4=图文. 分享关闭或已下线模式时回退到音频
+    let home_type = wx.getStorageSync('home_type');
+    if (home_type !== '1' && !(ENABLE_SHARE && home_type === '4')) {
+      home_type = '1';
+      wx.setStorageSync('home_type', home_type);
+    }
+    console.log("首页模式 home_type = " + home_type);
+
+    if (ENABLE_SHARE && home_type === '4') {
       wx.navigateTo({ url: '/pages/pic_text/index' });
     }
 

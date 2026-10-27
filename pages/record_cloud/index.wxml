@@ -20,8 +20,8 @@
   </view>
 
   <!-- 开发者才能显示 -->
-  <button class="selectimg" bindtap="chooseImg" wx:if="{{isDeveloper}}">选图片</button>
-  <view class="full-screen-img" wx:if="{{isFullScreen}}">
+  <button class="selectimg" bindtap="chooseImg" wx:if="{{isDeveloper && enableShare}}">选图片</button>
+  <view class="full-screen-img" wx:if="{{enableShare && isFullScreen}}">
   <image src="{{selectedImg}}" mode="widthFix"></image>
   </view>
 
@@ -44,7 +44,7 @@
       <view class="card-actions">
         <button class="third-btn" bindtap="onRenameLast">重命名</button>
         <button class="third-btn primary-ghost" bindtap="onSave">收藏</button>
-        <button class="third-btn info-ghost" bindtap="onShare">分享</button>
+        <button class="third-btn info-ghost" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
       </view>
     </view>
     <text class="empty" wx:else>暂无录音</text>
@@ -58,7 +58,7 @@
   </view>
 
   <!-- 分享菜单弹窗 -->
-<view class="share-mask" wx:if="{{showShareMenu}}" bindtap="hideShareMenu">
+<view class="share-mask" wx:if="{{enableShare && showShareMenu}}" bindtap="hideShareMenu">
   <view class="share-menu" catchtap="">
      <!-- 直接分享 - 使用 button -->
      <button 

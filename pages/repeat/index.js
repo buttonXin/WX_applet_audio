@@ -1,3 +1,5 @@
+import { applyShareConfig } from '../../utils/shareConfig';
+
 const audio = wx.createInnerAudioContext();
 
 Page({
@@ -16,6 +18,7 @@ Page({
     pointA: null,
     pointB: null
   },
+  onLoad() { applyShareConfig(this); },
   onShow() { this.loadFavs(); },
   onUnload() {
     audio.stop();

@@ -1,5 +1,7 @@
 // 收到分享的页面
 
+import { applyShareConfig } from '../../utils/shareConfig';
+
 // 定义常量数组
 const myStrings = [
   "你是第一个播放的人，内容已被焚毁",
@@ -96,6 +98,8 @@ Page({
   },
 
   onLoad(options) {
+    applyShareConfig(this);
+
     // 1. 解析参数（注意：微信会自动解码一层，需手动解码编码过的参数）
     // const receivedParams = {
     //   shareType: decodeURIComponent(options.shareType || 'burn'),

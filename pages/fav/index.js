@@ -1,3 +1,5 @@
+import { applyShareConfig } from '../../utils/shareConfig';
+
 const player = wx.createInnerAudioContext();
 // player.obeyMuteSwitch = false;
 // player.volume = 1; // 增大播放音量
@@ -24,6 +26,7 @@ Page({
     maxNameLength: 50, // 名字最大长度
   },
 
+  onLoad() { applyShareConfig(this); },
   onShow() { this.refresh(); },
   onUnload() { player.stop(); },
 

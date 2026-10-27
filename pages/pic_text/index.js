@@ -1,14 +1,19 @@
-import { 
-  batchUploadToCloud, 
+import {
+  batchUploadToCloud,
   chooseMedia,
   generateUUID
 } from '../../utils/uploadImageUtil.js';
+import { applyShareConfig } from '../../utils/shareConfig';
 
 Page({
   data: {
     pageTitle: '吃瓜',
     feedList: [],
     uuid: generateUUID(),
+  },
+
+  onLoad() {
+    applyShareConfig(this);
   },
 
   askForText({ title, placeholder, onConfirm }) {
