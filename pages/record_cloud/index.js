@@ -1,4 +1,4 @@
-import { ENABLE_SHARE, applyShareConfig } from '../../utils/shareConfig';
+import { applyShareConfig } from '../../utils/shareConfig';
 
 const app = getApp();
 const recorder = wx.getRecorderManager();
@@ -56,20 +56,10 @@ Page({
     userInfo: null,
     maxNameLength: 50, // 名字最大长度
 
-    showShareMenu: false,
-
-    // 隐藏功能使用
-    isDeveloper: false, // 是否是开发者
-    selectedImg:'',
-    isFullScreen: false,
-    clickCount: 0, // 连续点击计数
-    clickTimer: null, // 计数重置定时器
-
-    openSetting: false  // 是否打开设置按钮
+    showShareMenu: false
   },
-  
+
   onHide() {
-    this.setData({ isFullScreen: false });
     // 防止刚授权时的报错
     if (this.data.recording !== true) {
       return;
@@ -77,101 +67,8 @@ Page({
     if (this.player) this.player.pause();
   },
 
-   // 连续点击标题触发校验
-   onTitleClick() {
-    const { clickCount, clickTimer } = this.data;
-    // 清除之前的定时器（5秒内连续点击才有效）
-    if (clickTimer) clearTimeout(clickTimer);
-    // 计数+1
-    this.setData({ clickCount: clickCount + 1 });
-    // 5秒内连续点击5次触发校验
-    if (clickCount + 1 >= 5) {
-      this.checkDeveloperIdentity();
-      this.setData({ clickCount: 0 });
-    } else {
-      // 5秒未连续点击，重置计数
-      this.setData({
-        clickTimer: setTimeout(() => {
-          this.setData({ clickCount: 0 });
-        }, 5000)
-      });
-    }
-  },
-
-  // 校验开发者身份（云函数校验，避免前端泄露）
-  async checkDeveloperIdentity() {
-    wx.showLoading({ title: "验证中..." });
-    try {
-      // 调用云函数校验openid
-      const res = await wx.cloud.callFunction({
-        name: "checkDeveloper",
-        data: {}
-      });
-      wx.hideLoading();
-      if (res.result.isDeveloper) {
-        this.setData({ isDeveloper: true });
-        wx.showToast({ title: "开发者模式已激活", icon: "success" });
-        wx.setStorageSync('is_developer' , true);
-      } else {
-        setTimeout(() => wx.showToast({ title: "无权限", icon: "none" }), 300);
-        
-      }
-    } catch (err) {
-      wx.showToast({ title: "验证失败", icon: "none" });
-    } finally {
-      wx.hideLoading();
-    }
-  },
-
-    // 校验开发者身份（云函数校验，避免前端泄露）
-    async checkOpenSetting() {
-      // wx.showLoading({ title: "验证中..." });
-      try {
-        // 调用云函数校验openid
-        const res = await wx.cloud.callFunction({
-          name: "checkDeveloper",
-          data: {type: 1}
-        });
-        console.log('callback:openSetting = ', JSON.stringify(res.result.openSetting) )
-        // wx.hideLoading();
-        if (res.result.openSetting) {
-          this.setData({ openSetting: true });
-          // wx.showToast({ title: "已开启设置", icon: "success" });
-          wx.setStorageSync('openSetting' , true);
-        } else {
-          // setTimeout(() => wx.showToast({ title: "无权限", icon: "none" }), 300);
-          
-        }
-      } catch (err) {
-        // wx.showToast({ title: "验证失败", icon: "none" });
-      } finally {
-        // wx.hideLoading();
-      }
-    },
-
-  showIconPopup(){
-    wx.navigateTo({ url: '/pages/me/index' });
-  },
-
   onLoad() {
-    const is_developer = wx.getStorageSync('is_developer') || false;
-    if(is_developer){
-      this.setData({ isDeveloper: true });
-    }
     applyShareConfig(this);
-
-    // 首页模式: 1=音频(默认), 4=图文. 分享关闭或已下线模式时回退到音频
-    let home_type = wx.getStorageSync('home_type');
-    if (home_type !== '1' && !(ENABLE_SHARE && home_type === '4')) {
-      home_type = '1';
-      wx.setStorageSync('home_type', home_type);
-    }
-    console.log("首页模式 home_type = " + home_type);
-
-    if (ENABLE_SHARE && home_type === '4') {
-      wx.navigateTo({ url: '/pages/pic_text/index' });
-    }
-
 
     const last = wx.getStorageSync('lastRecord');
     const userInfo = wx.getStorageSync('userInfo') || app.globalData?.userInfo || null;
@@ -550,12 +447,7 @@ Page({
          // 显示分享菜单
         wx.hideLoading();
       }
-      if(this.data.isDeveloper){
-        setTimeout(() => this.setData({ showShareMenu: true }), 2000);
-        this.setData({ isFullScreen: true });
-       }else{
-          this.setData({ showShareMenu: true });
-       }
+      this.setData({ showShareMenu: true });
 
     } catch (err) {
           console.error('分享失败:', err);
@@ -629,116 +521,15 @@ Page({
   
   // 直接分享
   onDirectShare() {
-    if(this.data.isDeveloper){
-      setTimeout(() => this.setData({ isFullScreen: false }), 2000);
-     }
-    
     this.setData({ showShareMenu: false  });
-    const db = wx.cloud.database();
-    const last = this.data.lastRecord;
-    
-    db.collection('audios').where({
-      _id: last.audioId,
-      _openid: last.openid
-    }).update({
-      data: {
-        burn : 1 // 更新字段   1表示直接分享 , 2 表示阅后即焚 , 3 表示 用户已读 其他用户无法再读取.
-      }
-    });
-  },
-  
-  // 阅后即焚 分享
-  onBurnReadShare() {
-    this.setData({ showShareMenu: false });
-    const last = this.data.lastRecord;
-
-    const db = wx.cloud.database();
-    
-    db.collection('audios').where({
-      _id: last.audioId,
-      _openid: last.openid
-    }).update({
-      data: {
-        burn : 2 // 更新字段  
-      }
-    });
-  },
-
-    // 选图
-    chooseImg() {
-      wx.chooseImage({
-        count: 1,
-        success: (res) => {
-          console.log("---"+res.tempFilePaths[0] )
-          this.setData({ selectedImg: res.tempFilePaths[0] });
-        }
-      });
-    },
-    // 全屏显示并准备分享
-  showFullScreenImg() {
-    // 延迟100-300ms确保渲染完成，再触发分享
-    setTimeout(() => this.setData({ isFullScreen: true }), 200);
   },
 
     // 分享回调
   onShareAppMessage(res) {
-    const {   lastRecord } = this.data;
- 
-    console.log("分享数据" , JSON.stringify(lastRecord) )
-
-    console.log('分享来源:', res.from); // 'button' 或 'menu'
-    console.log('分享目标:', res.target); // 当 from == 'button' 时，包含被点击按钮的信息
-
-    // 获取按钮信息（如果按钮设置了 data-* 属性）
-    let shareAction = 'right-top-share';
-    if (res.from === 'button' && res.target && res.target.dataset) {
-      shareAction = res.target.dataset.action || ''; // 获取 data-action
-      console.log("分享按钮的 action:", shareAction);
-    }
-
-    // 2. 对参数值编码（处理中文/特殊字符）
-    const encodedParams = {
-      shareType: encodeURIComponent(shareAction),
-      name: encodeURIComponent(lastRecord.name),
-      duration: encodeURIComponent(lastRecord.duration),
-      startedAtText: encodeURIComponent(lastRecord.startedAtText),
-      fileID: encodeURIComponent(lastRecord.fileID),
-      audioId: lastRecord.audioId,
-      openid: lastRecord.openid,
-    };
-
-    let img = '/assets/share_img.jpg';
-    if(this.data.isDeveloper){
-      img = null;
-     }
-
-    let pathIndex = '' ;
-    let tempTitle = '人类的本质是复读机';
-    if(shareAction === 'burn'){
-      pathIndex = '/pages/friend_shared/index?id=shaerd';
-      tempTitle = '分享内容是 阅后即焚';
-    }else 
-    if(shareAction === 'direct'){
-      pathIndex = '/pages/friend_shared/index?id=shaerd';
-    }else{
-      return {
-        title: '人类的本质是复读机',
-        path: '/pages/record_cloud/index', // 携带多个参数的路径
-        imageUrl: img, // 之前生成的图片作为封面
-        // desc: '包含多个参数的复读机分享'
-      };
-    }
-
-    // 3. 拼接分享路径（多个参数用 & 连接） 这里注意回车会导致数据增加
-    const sharePath = `${pathIndex}&shareType=${encodedParams.shareType}&audioId=${encodedParams.audioId}&openid=${encodedParams.openid}&name=${encodedParams.name}&duration=${encodedParams.duration}&startedAtText=${encodedParams.startedAtText}&fileID=${encodedParams.fileID}`;
-
-    console.log('分享数据:', sharePath);
-    // 4. 返回分享配置
     return {
-      title: tempTitle,
-      path: sharePath, // 携带多个参数的路径
-      imageUrl: img, // 之前生成的图片作为封面
-      // desc: '包含多个参数的复读机分享'
+      title: '人类的本质是复读机',
+      path: '/pages/record_cloud/index',
+      imageUrl: '/assets/share_img.jpg',
     };
   },
 

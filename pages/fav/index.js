@@ -331,90 +331,14 @@ Page({
   // 直接分享
   onDirectShare() {
     this.setData({ showShareMenu: false  });
-    const db = wx.cloud.database();
-    const last = this.data.lastRecord;
-    
-    db.collection('audios').where({
-      _id: last.audioId,
-      _openid: last.openid
-    }).update({
-      data: {
-        burn : 1 // 更新字段   1表示直接分享 , 2 表示阅后即焚 , 3 表示 用户已读 其他用户无法再读取.
-      }
-    });
-  },
-  
-  // 阅后即焚 分享
-  onBurnReadShare() {
-    this.setData({ showShareMenu: false });
-    const last = this.data.lastRecord;
-
-    const db = wx.cloud.database();
-    
-    db.collection('audios').where({
-      _id: last.audioId,
-      _openid: last.openid
-    }).update({
-      data: {
-        burn : 2 // 更新字段  
-      }
-    });
   },
 
    // 分享回调
    onShareAppMessage(res) {
-    const {   lastRecord } = this.data;
- 
-    console.log("分享数据" , JSON.stringify(lastRecord) )
-
-    console.log('分享来源:', res.from); // 'button' 或 'menu'
-    console.log('分享目标:', res.target); // 当 from == 'button' 时，包含被点击按钮的信息
-
-    // 获取按钮信息（如果按钮设置了 data-* 属性）
-    let shareAction = 'right-top-share';
-    if (res.from === 'button' && res.target && res.target.dataset) {
-      shareAction = res.target.dataset.action || ''; // 获取 data-action
-      console.log("分享按钮的 action:", shareAction);
-    }
-
-    // 2. 对参数值编码（处理中文/特殊字符）
-    const encodedParams = {
-      shareType: encodeURIComponent(shareAction),
-      name: encodeURIComponent(lastRecord.name),
-      duration: encodeURIComponent(lastRecord.duration),
-      startedAtText: encodeURIComponent(lastRecord.startedAtText),
-      fileID: encodeURIComponent(lastRecord.fileID),
-      audioId: lastRecord.audioId,
-      openid: lastRecord.openid,
-    };
-
-    let pathIndex = '' ;
-    let tempTitle = '人类的本质是复读机';
-    if(shareAction === 'burn'){
-      pathIndex = '/pages/friend_shared/index?id=shaerd';
-      tempTitle = '分享内容是 阅后即焚';
-    }else 
-    if(shareAction === 'direct'){
-      pathIndex = '/pages/friend_shared/index?id=shaerd';
-    }else{
-      return {
-        title: '人类的本质是复读机',
-        path: '/pages/record_cloud/index', // 携带多个参数的路径
-        imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
-        // desc: '包含多个参数的复读机分享'
-      };
-    }
-
-    // 3. 拼接分享路径（多个参数用 & 连接） 这里注意回车会导致数据增加
-    const sharePath = `${pathIndex}&shareType=${encodedParams.shareType}&audioId=${encodedParams.audioId}&openid=${encodedParams.openid}&name=${encodedParams.name}&duration=${encodedParams.duration}&startedAtText=${encodedParams.startedAtText}&fileID=${encodedParams.fileID}`;
-
-    console.log('分享数据:', sharePath);
-    // 4. 返回分享配置
     return {
-      title: tempTitle,
-      path: sharePath, // 携带多个参数的路径
-      imageUrl: '/assets/share_img.jpg', // 之前生成的图片作为封面
-      // desc: '包含多个参数的复读机分享'
+      title: '人类的本质是复读机',
+      path: '/pages/record_cloud/index',
+      imageUrl: '/assets/share_img.jpg',
     };
   },
 

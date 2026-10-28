@@ -1,30 +1,10 @@
 <view class="page">
   <view class="top">
-    <!-- <text class="slogan">人类的本质是复读机-.-</text> -->
-    <view class="hero">
-      <!-- <text class="title" bindtap="onTitleClick" >开始录音</text> -->
-      <text class="subtitle" bindtap="onTitleClick" >{{recording ? '录音中...' : '点击开始录音'}}</text>
-      <!-- 替换为SVG设置图标  wx:if="{{isDeveloper || openSetting}}" -->
-        <image 
-          wx:if="{{isDeveloper}}"
-          src="/assets/setting.svg"  
-          mode="widthFix"           
-          class="svg-setting-icon"   
-          bindtap="showIconPopup"   
-        />
-    </view>
     <view class="like-container" bindtap="toggleLike">
       <text class="like-icon">❤️</text>
       <text>点赞支持</text>
     </view>
   </view>
-
-  <!-- 开发者才能显示 -->
-  <button class="selectimg" bindtap="chooseImg" wx:if="{{isDeveloper && enableShare}}">选图片</button>
-  <view class="full-screen-img" wx:if="{{enableShare && isFullScreen}}">
-  <image src="{{selectedImg}}" mode="widthFix"></image>
-  </view>
-
 
   <view class="last">
     <text class="label">上次录音</text>
@@ -71,26 +51,8 @@
       <text>直接分享</text>
     </button>
     
-    <!-- 阅后即焚 - 使用 button -->
-    <!-- <button 
-      class="share-menu-item share-btn" 
-      open-type="share"
-      data-type="burnRead"
-      bindtap="onBurnReadShare"
-      data-action="burn"
-    >
-      <text>页面关闭后内容不会保存</text>
-    </button> -->
     <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听. \n链接有效期2天, 2天后自动失效</view>
   </view>
 </view>
-
-<!-- 用于生成文字封面的 canvas（隐藏） -->
-<canvas 
-  type="2d" 
-  id="textCoverCanvas" 
-  class="text-cover-canvas"
-  style="width: 375px; height: 300px; position: fixed; left: -9999px;"
-></canvas>
 
 </view>

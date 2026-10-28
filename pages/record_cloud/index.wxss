@@ -1,21 +1,6 @@
 .page { min-height: 100vh; padding: 40rpx 32rpx 160rpx; background: linear-gradient(180deg, #fff 0%, #fff 100%); box-sizing: border-box; }
 .top { text-align: center; margin-bottom: 24rpx; }
-.slogan { font-size: 24rpx; color: #7c9087; }
-.hero { margin-top: 12rpx; }
-.title { font-size: 38rpx; font-weight: 700; color: #0b5132; }
-.subtitle { display: block; margin-top: 8rpx; color: #5f776a; }
-/* SVG设置图标样式，和原info-icon保持一致 */
-.svg-setting-icon {
-  width: 30px;    /* 和原icon的size="20"一致 */
-  height: 30px;   /* 固定高度，保证和宽度一致 */
-  /* 可选：调整SVG颜色（仅对单色SVG生效） */
-  tint-color: #4a97e9;  /* 替换为原icon的color="#007aff" */
-  /* 可选：增加点击区域，提升交互体验 */
-  padding: 4rpx;
-  box-sizing: content-box;
-  margin-top: 20rpx;
-}
-.last { margin-top: 200rpx; }
+.last { margin-top: 60rpx; }
 .label { color: #5f776a; }
 .card { margin-top: 12rpx; padding: 20rpx; border-radius: 16rpx; background: #fff; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06); }
 .card-row { display: flex; align-items: center; gap: 16rpx; }
@@ -83,30 +68,6 @@
   background: #f5f5f5;
 }
 
-
-/* 全屏图片样式（适配微信截图） */
-.full-screen-img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #fff;
-  z-index: 999;
-  display: flex;
-  justify-content: center;
-  /* 核心改：图片上对齐，优先显示上半部分 */
-  align-items: flex-start; 
-  padding-top: 0; /* 顶部无间距，图片顶格显示 */
-}
-/* 关键：图片铺满上半区，适配截图 */
-.full-screen-img image {
-  width: 100%;
-  /* 高度设为屏幕80%（微信截图核心区域），确保上半区完整显示 */
-  height: 80vh; 
-  /* aspectFill：保持宽高比，铺满容器（优先显示图片上半部分） */
-  object-fit: cover; 
-}
 
 /* 样式控制 */
 .like-container {
