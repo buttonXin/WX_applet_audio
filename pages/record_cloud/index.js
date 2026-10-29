@@ -4,11 +4,11 @@ const app = getApp();
 const recorder = wx.getRecorderManager();
 const player = wx.createInnerAudioContext();
 
-// 将duration改为30000毫秒（30秒）
-const MAX_DURATION = 60 * 60 * 1000; // 最大录制时长 4分钟
+// 微信 RecorderManager 单次录音时长上限为 600000ms(10分钟)，超出会导致录音失败
+const MAX_DURATION = 10 * 60 * 1000;
 const MAX_SHARE_COUNT = 5; // 每天最大分享次数
 
-const recOptions = { 
+const recOptions = {
   duration: MAX_DURATION, // 录音最大时长
   sampleRate: 16000, 
   format: 'mp3', 
@@ -82,7 +82,13 @@ Page({
       // 清除所有定时器
       this.clearTimer();
       this.clearAutoStopTimer();
-      
+
+      // 录音异常结束（无临时文件或时长过短）时，不生成录音记录
+      if (!res || !res.tempFilePath || this.data.durationMs < 1000) {
+        this.setData({ recording: false, durationText: fmt(0), durationMs: 0, startAt: null });
+        return;
+      }
+
       const prev = this.data.lastRecord;
       const startedAt = this.data.startAt || Date.now();
       const lastRecord = this.withStartText({
@@ -108,9 +114,19 @@ Page({
     });
     
     recorder.onError(err => {
+      console.error('录音出错:', err);
       this.clearTimer();
       this.clearAutoStopTimer();
-      wx.showToast({ title: err.errMsg || '录音失败', icon: 'none' });
+      // 只在用户主动录音时提示，避免系统偶发错误在页面打开时弹窗
+      if (this.data.recording) {
+        this.setData({
+          recording: false,
+          durationMs: 0,
+          durationText: fmt(0),
+          startAt: null
+        });
+        wx.showToast({ title: '录音失败，请重试', icon: 'none' });
+      }
     });
     
     player.onEnded(() => this.setData({ playing: false }));

@@ -27,7 +27,7 @@
         <button class="third-btn info-ghost" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
       </view>
     </view>
-    <text class="empty" wx:else>暂无录音</text>
+    <text class="empty" wx:else>暂无录音，点击下方「开始录音」</text>
   </view>
   <text class="wx_check">最长录制时间:{{maxDuration / 60 / 1000}}分钟</text>
 

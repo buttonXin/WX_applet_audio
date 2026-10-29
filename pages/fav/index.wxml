@@ -22,7 +22,7 @@
       </view>
     </block>
   </view>
-  <view class="empty" wx:else>暂无收藏</view>
+  <view class="empty" wx:else>暂无收藏，录音后点击「收藏」会显示在这里</view>
 
 
 
