@@ -1,21 +1,12 @@
 <view class="page">
-  <view class="top">
-    <view class="like-container" bindtap="toggleLike">
-      <text class="like-icon">❤️</text>
-      <text>点赞支持</text>
-    </view>
-  </view>
+  <view class="top"></view>
 
   <view class="last">
     <text class="label">上次录音</text>
     <view class="card" wx:if="{{lastRecord}}">
       <view class="card-row">
         <view class="card-info">
-          <view  class="card-title" 
-                
-                hover-class="title-hover"
-          >{{lastRecord.name || '未命名'}}</view>
-
+          <view class="card-title">{{lastRecord.name || '未命名'}}</view>
           <view class="card-meta">时长：{{lastRecord.duration}} 秒</view>
           <view class="card-time">时间：{{lastRecord.startedAtText || '--'}}</view>
         </view>
@@ -24,35 +15,15 @@
       <view class="card-actions">
         <button class="third-btn" bindtap="onRenameLast">重命名</button>
         <button class="third-btn primary-ghost" bindtap="onSave">收藏</button>
-        <button class="third-btn info-ghost" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
       </view>
     </view>
     <text class="empty" wx:else>暂无录音，点击下方「开始录音」</text>
   </view>
-  <text class="wx_check">最长录制时间:{{maxDuration / 60 / 1000}}分钟</text>
+  <text class="hint">最长录制时间：{{maxDuration / 60 / 1000}} 分钟</text>
 
   <view class="bottom-bar">
     <view class="timer">{{durationText}}</view>
     <button class="btn primary" bindtap="onStart" wx:if="{{!recording}}">开始录音</button>
     <button class="btn danger" bindtap="onStop" wx:else>停止</button>
   </view>
-
-  <!-- 分享菜单弹窗 -->
-<view class="share-mask" wx:if="{{enableShare && showShareMenu}}" bindtap="hideShareMenu">
-  <view class="share-menu" catchtap="">
-     <!-- 直接分享 - 使用 button -->
-     <button 
-      class="share-menu-item share-btn" 
-      open-type="share"
-      data-type="direct"
-      bindtap="onDirectShare"
-      data-action="direct"
-    >
-      <text>直接分享</text>
-    </button>
-    
-    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听. \n链接有效期2天, 2天后自动失效</view>
-  </view>
-</view>
-
 </view>

@@ -1,7 +1,5 @@
 <view class="page">
-  <view class="top">
-    <!-- <text class="slogan">人类的本质是复读机-.-</text> -->
-  </view>
+  <view class="top"></view>
   <view class="title">我的收藏</view>
   <view wx:if="{{list.length}}">
     <block wx:for="{{list}}" wx:key="id">
@@ -15,33 +13,11 @@
           <button class="play" size="mini" bindtap="onPlay" data-id="{{item.id}}">播放</button>
         </view>
         <view class="actions">
-      <button class="btn ghost" data-id="{{item.id}}" bindtap="onRename">重命名</button>
-      <button class="btn warn" data-id="{{item.id}}" bindtap="onRemove">删除</button>
-      <button class="btn info-ghost" data-id="{{item.id}}" bindtap="onShare" wx:if="{{enableShare}}">分享</button>
-    </view>
+          <button class="btn ghost" data-id="{{item.id}}" bindtap="onRename">重命名</button>
+          <button class="btn warn" data-id="{{item.id}}" bindtap="onRemove">删除</button>
+        </view>
       </view>
     </block>
   </view>
   <view class="empty" wx:else>暂无收藏，录音后点击「收藏」会显示在这里</view>
-
-
-
-  <!-- 分享菜单弹窗 -->
-<view class="share-mask" wx:if="{{enableShare && showShareMenu}}" bindtap="hideShareMenu">
-  <view class="share-menu" catchtap="">
-     <!-- 直接分享 - 使用 button -->
-     <button 
-      class="share-menu-item share-btn" 
-      open-type="share"
-      data-type="direct"
-      bindtap="onDirectShare"
-      data-action="direct"
-    >
-      <text>直接分享</text>
-    </button>
-    
-    <view class="wx_check">分享后,微信后台审核成功后,朋友方可收听</view>
-  </view>
-</view>
-
 </view>
