@@ -12,3 +12,5 @@
 .ghost { color: #1abc8c; border: 1px solid #1abc8c; background: #f4fffa; }
 .warn { color: #ff6b6b; border: 1px solid #ff6b6b; background: #fff1f1; }
 .empty { text-align: center; color: #9ab3a3; margin-top: 80rpx; }
+.link-btn { margin-top: 40rpx; padding: 10rpx 0; background: transparent; color: #1abc8c; font-size: 26rpx; line-height: 1.6; text-align: center; }
+.link-btn::after { border: none; }

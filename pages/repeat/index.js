@@ -131,12 +131,4 @@ Page({
   },
   onClearAB() { this.setData({ pointA: null, pointB: null, abMode: false }); },
 
-  toggleLike() {
-    wx.showToast({
-      title: '感谢支持 ❤️',
-      icon: 'none',
-      duration: 800
-    });
-  },
-
 });

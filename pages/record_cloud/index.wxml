@@ -20,6 +20,7 @@
     <text class="empty" wx:else>暂无录音，点击下方「开始录音」</text>
   </view>
   <text class="hint">最长录制时间：{{maxDuration / 60 / 1000}} 分钟</text>
+  <button class="link-btn" open-type="contact">遇到问题/改进建议？请联系客服</button>
 
   <view class="bottom-bar">
     <view class="timer">{{durationText}}</view>

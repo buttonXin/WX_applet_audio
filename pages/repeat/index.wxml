@@ -27,8 +27,5 @@
       <slider class="slider" min="0.5" max="2.0" step="0.1" value="{{speed}}" show-value bindchange="onSpeedChange" />
     </view>
   </view>
-  <view class="like-container" bindtap="toggleLike">
-      <text class="like-icon">❤️</text>
-      <text>点赞支持</text>
-    </view>
+  <button class="link-btn" open-type="contact">遇到问题/改进建议？请联系客服</button>
 </view>

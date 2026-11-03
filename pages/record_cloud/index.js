@@ -263,13 +263,5 @@ Page({
       wx.setStorageSync('favList', favs);
       wx.showToast({ title: '已更新收藏', icon: 'success' });
     }
-  },
-
-  toggleLike() {
-    wx.showToast({
-      title: '感谢支持 ❤️',
-      icon: 'none',
-      duration: 800
-    });
   }
 });
