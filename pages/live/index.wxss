@@ -1,0 +1,68 @@
+.page { position: relative; min-height: 100vh; padding: 40rpx 32rpx 300rpx; background: linear-gradient(180deg, #fff 0%, #fff 100%); box-sizing: border-box; }
+
+.header { margin-top: 20rpx; text-align: center; }
+.subtitle { display: block; font-size: 30rpx; color: #6f8a7b; }
+.settings-toggle {
+  position: absolute;
+  top: 24rpx;
+  right: 32rpx;
+  padding: 10rpx 20rpx;
+  font-size: 26rpx;
+  color: #1abc8c;
+  background: #f4fffa;
+  border: 1rpx solid #cdeee2;
+  border-radius: 24rpx;
+}
+
+.status-card {
+  margin-top: 36rpx;
+  padding: 44rpx 32rpx;
+  border-radius: 24rpx;
+  background: #f4fffa;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.status { font-size: 48rpx; font-weight: 700; color: #0b5132; }
+.status.rec { color: #ff6b6b; }
+.status.play { color: #1abc8c; }
+.status.paused { color: #e6a23c; }
+.status-hint { margin-top: 12rpx; font-size: 28rpx; color: #6f8a7b; }
+.status-timer { margin-top: 10rpx; font-size: 40rpx; color: #0b5132; font-family: monospace; }
+.debug { margin-top: 16rpx; font-size: 22rpx; color: #9ab3a3; text-align: center; line-height: 1.5; }
+
+.setting {
+  margin-top: 48rpx;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  background: #fff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+.setting-row { display: flex; justify-content: space-between; align-items: center; }
+.setting-label { font-size: 32rpx; color: #0b5132; font-weight: 600; }
+.setting-value { font-size: 32rpx; color: #1abc8c; font-weight: 600; }
+.setting-hint { display: block; margin-top: 8rpx; font-size: 26rpx; color: #9ab3a3; line-height: 1.6; }
+.switch-row { padding: 4rpx 0; }
+.setting-divider { height: 1rpx; background: #eef3f0; margin: 26rpx 0; }
+
+.tip { display: block; margin-top: 32rpx; text-align: center; font-size: 28rpx; color: #9ab3a3; }
+
+.mode { margin-top: 32rpx; display: flex; gap: 16rpx; }
+.mode-btn {
+  flex: 1;
+  padding: 24rpx 0;
+  text-align: center;
+  font-size: 32rpx;
+  color: #6f8a7b;
+  background: #f2f6f4;
+  border-radius: 14rpx;
+}
+.mode-btn.active { color: #fff; background: #1abc8c; }
+.mode-hint { display: block; margin-top: 12rpx; text-align: center; font-size: 26rpx; color: #9ab3a3; line-height: 1.6; }
+
+.bottom-bar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 40rpx; width: calc(100% - 64rpx); }
+.btn { width: 100%; border-radius: 50rpx; padding: 28rpx; margin-bottom: 24rpx; font-size: 40rpx; font-weight: 600; }
+.primary { background: #1abc8c; color: #fff; border: none; }
+.danger { background: #ff6b6b; color: #fff; border: none; }
+.interrupt { background: #fff; color: #1abc8c; border: 2rpx solid #1abc8c; }

@@ -1,0 +1,43 @@
+<view class="page">
+  <view class="header">
+    <text class="subtitle">说完一句，自动回放你的声音</text>
+    <text class="settings-toggle" bindtap="onToggleSettings">{{settingsOpen ? '收起设置' : '设置'}}</text>
+  </view>
+
+  <view class="status-card">
+    <text class="status {{statusClass}}">{{statusText}}</text>
+    <text class="status-hint">{{statusHint}}</text>
+    <text class="status-timer" wx:if="{{recording}}">{{durationText}}</text>
+    <text class="debug">{{debugText}}</text>
+  </view>
+
+  <block wx:if="{{settingsOpen}}">
+    <view class="setting">
+      <view class="setting-row switch-row">
+        <text class="setting-label">等播放完再继续听</text>
+        <switch checked="{{waitPlayEnd}}" color="#1abc8c" bindchange="onWaitChange" />
+      </view>
+      <text class="setting-hint">开启后播放期间不会被说话声打断;关闭则耳机模式下开口即打断。</text>
+      <view class="setting-divider"></view>
+      <view class="setting-row">
+        <text class="setting-label">停顿多久算说完</text>
+        <text class="setting-value">{{silenceText}}</text>
+      </view>
+      <slider min="500" max="2000" step="50" value="{{silenceMs}}" activeColor="#1abc8c" block-size="28" bindchanging="onSilenceChanging" bindchange="onSilenceChange" />
+      <text class="setting-hint">推荐 0.7 秒。调小反应更快,调大不容易被说话中的停顿打断。</text>
+    </view>
+
+    <view class="mode">
+      <view class="mode-btn {{mode === 'headphone' ? 'active' : ''}}" bindtap="onModeTap" data-mode="headphone">耳机模式</view>
+      <view class="mode-btn {{mode === 'speaker' ? 'active' : ''}}" bindtap="onModeTap" data-mode="speaker">外放模式</view>
+    </view>
+    <text class="mode-hint">{{modeHint}}</text>
+
+    <view class="tip">建议戴耳机使用</view>
+  </block>
+
+  <view class="bottom-bar">
+    <button wx:if="{{playing}}" class="btn interrupt" bindtap="onInterrupt">打断</button>
+    <button class="btn {{session ? 'danger' : 'primary'}}" bindtap="onToggle">{{session ? '结束' : '开始'}}</button>
+  </view>
+</view>

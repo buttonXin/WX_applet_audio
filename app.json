@@ -2,7 +2,8 @@
   "pages": [
     "pages/record_cloud/index",
     "pages/fav/index",
-    "pages/repeat/index"
+    "pages/repeat/index",
+    "pages/live/index"
   ],
   "permission": {
     "scope.record": {
@@ -16,6 +17,7 @@
     "list": [
       { "pagePath": "pages/record_cloud/index", "text": "录音", "iconPath": "assets/rec.png", "selectedIconPath": "assets/rec_on.png" },
       { "pagePath": "pages/repeat/index", "text": "复读机", "iconPath": "assets/repeat.png", "selectedIconPath": "assets/repeat_on.png" },
+      { "pagePath": "pages/live/index", "text": "跟读", "iconPath": "assets/follow.png", "selectedIconPath": "assets/follow_on.png" },
       { "pagePath": "pages/fav/index", "text": "收藏", "iconPath": "assets/fav.png", "selectedIconPath": "assets/fav_on.png" }
     ]
   },
