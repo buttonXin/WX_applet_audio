@@ -72,6 +72,18 @@ recorder.start({format:'PCM', frameSize:2KB, sampleRate:24000})
 但鸿蒙/部分安卓不落实；试过 `audioMode: 'voiceChat'`（通话路由，需基础库 3.17.3+）**在鸿蒙上无效，已回退**。
 蓝牙耳机基本无解。不要重复尝试这条线。
 
+## 声纹授权（审核硬要求，不要绕过）
+
+审核驳回原因：采集用户声音属于收集个人信息，必须有独立的《声纹授权协议》并取得同意后才能调用麦克风。
+
+- 协议页：`pages/agreement/`（非 tabBar，`?consent=1` 时显示「同意并继续」）
+- 工具：`utils/voiceConsent.js` — `hasConsent()` / `grantConsent()` / `openAgreement()`
+- 拦截点：`record_cloud.onStart` 与 `live.startSession` 的第一行，未同意就跳到协议页，
+  同意后靠页面的 `onShow` 里 `pendingConsentStart` 续跑
+- 存储 key `voiceConsentV1`，协议有实质修改时把版本号加一，用户会被要求重新同意
+- 入口：录音页底部、跟读页设置面板里各有一个《声纹授权协议》链接
+- **新增任何调用 `recorder.start` / `wx.authorize({scope:'scope.record'})` 的路径，都必须先过 `hasConsent()`**
+
 ## 本地存储 key
 
 | key | 内容 |
@@ -82,6 +94,7 @@ recorder.start({format:'PCM', frameSize:2KB, sampleRate:24000})
 | `liveMode` | `headphone` / `speaker` |
 | `liveWaitPlayEnd` | 是否等播放完再继续听，默认 true |
 | `liveIntroShown` | 首开介绍弹窗已展示标记 |
+| `voiceConsentV1` | 《声纹授权协议》已同意 |
 
 ## 开发约定
 

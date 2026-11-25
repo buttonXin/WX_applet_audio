@@ -34,6 +34,7 @@
     <text class="mode-hint">{{modeHint}}</text>
 
     <view class="tip">建议戴耳机使用</view>
+    <text class="agree-link" bindtap="onOpenAgreement">《声纹授权协议》</text>
   </block>
 
   <view class="bottom-bar">

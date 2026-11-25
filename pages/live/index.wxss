@@ -47,6 +47,7 @@
 .setting-divider { height: 1rpx; background: #eef3f0; margin: 26rpx 0; }
 
 .tip { display: block; margin-top: 32rpx; text-align: center; font-size: 28rpx; color: #9ab3a3; }
+.agree-link { display: block; margin-top: 20rpx; text-align: center; font-size: 24rpx; color: #b7c9bd; }
 
 .mode { margin-top: 32rpx; display: flex; gap: 16rpx; }
 .mode-btn {

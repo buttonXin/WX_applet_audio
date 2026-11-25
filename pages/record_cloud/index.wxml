@@ -21,6 +21,7 @@
   </view>
   <text class="hint">最长录制时间：{{maxDuration / 60 / 1000}} 分钟</text>
   <button class="link-btn" open-type="contact">遇到问题/改进建议？请联系客服</button>
+  <text class="agree-link" bindtap="onOpenAgreement">《声纹授权协议》</text>
 
   <view class="bottom-bar">
     <view class="timer">{{durationText}}</view>

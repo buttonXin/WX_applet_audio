@@ -1,0 +1,68 @@
+<scroll-view class="page" scroll-y>
+  <view class="title">声纹授权协议</view>
+  <text class="intro">为了让录音、复读、跟读功能正常工作，我们需要使用你手机的麦克风采集你的声音。声音属于你的个人信息，请先阅读下面的内容。</text>
+  <text class="agreed" wx:if="{{agreed}}">你已同意本协议</text>
+
+  <view class="section">
+    <text class="h">一、我们收集什么</text>
+    <text class="p">· 你说话时的声音录音（属于个人信息中的声纹信息）</text>
+    <text class="p">· 录音时长、录制时间等实现录音功能所必需的信息</text>
+  </view>
+
+  <view class="section">
+    <text class="h">二、收集的目的和用途</text>
+    <text class="p">仅用于以下目的：</text>
+    <text class="p">1. 在你手机上录制并回放你自己的声音，实现「录音」「复读机」「跟读」功能</text>
+    <text class="p">2. 实现跟读模式下「说完一句自动回放」的效果</text>
+    <text class="p">我们不会将你的声音用于身份识别、声纹比对、训练人工智能模型或任何其他目的。</text>
+  </view>
+
+  <view class="section">
+    <text class="h">三、什么时候收集</text>
+    <text class="p">只有你点击「开始录音」「开始」按钮，并且同意本协议后，我们才会调用麦克风。你随时可以点「结束」停止录音。</text>
+  </view>
+
+  <view class="section">
+    <text class="h">四、如何存储与保存期限</text>
+    <text class="p">1. 录音只保存在你手机的微信小程序本地缓存中，不会上传到我们的服务器</text>
+    <text class="p">2. 你收藏的录音一直保存在本机，直到你在「收藏」页删除</text>
+    <text class="p">3. 跟读模式生成的片段只用于当次回放，回放结束后自动删除</text>
+    <text class="p">4. 删除小程序或清理小程序缓存后，本地录音会被全部清除</text>
+  </view>
+
+  <view class="section">
+    <text class="h">五、与第三方共享</text>
+    <text class="p">我们不会向任何第三方提供、共享、转让或公开披露你的声音信息。</text>
+  </view>
+
+  <view class="section">
+    <text class="h">六、你的权利</text>
+    <text class="p">1. 随时点「结束」停止录音</text>
+    <text class="p">2. 在「收藏」页删除任意一条录音</text>
+    <text class="p">3. 在微信「我-设置-隐私-授权管理」或小程序设置中关闭麦克风授权</text>
+    <text class="p">4. 通过小程序内「联系客服」要求了解或删除你的相关录音</text>
+  </view>
+
+  <view class="section">
+    <text class="h">七、未成年人保护</text>
+    <text class="p">未满 14 周岁的未成年人，请在监护人陪同下阅读本协议，并在取得监护人同意后使用录音功能。</text>
+  </view>
+
+  <view class="section">
+    <text class="h">八、协议的更新</text>
+    <text class="p">本协议更新后，我们会在小程序内提示你重新阅读并同意。</text>
+  </view>
+
+  <view class="section">
+    <text class="h">九、联系我们</text>
+    <text class="p">如有疑问，请通过小程序内的「联系客服」与我们联系。</text>
+    <text class="p date">生效日期：2026 年 11 月 25 日</text>
+  </view>
+
+  <view class="pad"></view>
+</scroll-view>
+
+<view class="bottom-bar" wx:if="{{needConsent}}">
+  <button class="btn ghost" bindtap="onReject">不同意</button>
+  <button class="btn primary" bindtap="onAgree">同意并继续</button>
+</view>

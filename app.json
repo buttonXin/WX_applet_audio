@@ -3,11 +3,12 @@
     "pages/record_cloud/index",
     "pages/fav/index",
     "pages/repeat/index",
-    "pages/live/index"
+    "pages/live/index",
+    "pages/agreement/index"
   ],
   "permission": {
     "scope.record": {
-      "desc": "用于录制音频，实现录音保存与复读机播放功能"
+      "desc": "用于录制并回放你的声音，实现录音、复读机与跟读功能。使用前需同意《声纹授权协议》。"
     }
   },
   "tabBar": {
