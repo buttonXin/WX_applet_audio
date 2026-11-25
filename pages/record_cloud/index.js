@@ -41,6 +41,8 @@ Page({
   },
 
   onHide() {
+    // 切走页面时自动停止录音,避免后台继续录音
+    if (this.data.recording) this.onStop();
     // 防止刚授权时的报错
     if (this.data.playing) {
       player.pause();
@@ -52,7 +54,8 @@ Page({
     const last = wx.getStorageSync('lastRecord');
     if (last) this.setData({ lastRecord: this.withStartText(last) });
 
-    recorder.onStop(res => {
+    // 监听器保存引用,卸载时精确移除,避免页面重建后监听器叠加
+    this._onRecStop = res => {
       // 清除所有定时器
       this.clearTimer();
       this.clearAutoStopTimer();
@@ -82,9 +85,9 @@ Page({
         lastRecord,
         startAt: null
       });
-    });
+    };
 
-    recorder.onError(err => {
+    this._onRecError = err => {
       console.error('录音出错:', err);
       this.clearTimer();
       this.clearAutoStopTimer();
@@ -98,16 +101,25 @@ Page({
         });
         wx.showToast({ title: '录音失败，请重试', icon: 'none' });
       }
-    });
+    };
 
-    player.onEnded(() => this.setData({ playing: false }));
-    player.onStop(() => this.setData({ playing: false }));
+    this._onPlayerEnded = () => this.setData({ playing: false });
+    this._onPlayerStop = () => this.setData({ playing: false });
+
+    recorder.onStop(this._onRecStop);
+    recorder.onError(this._onRecError);
+    player.onEnded(this._onPlayerEnded);
+    player.onStop(this._onPlayerStop);
   },
 
   onUnload() {
     this.clearTimer();
     this.clearAutoStopTimer();
     player.stop();
+    if (this._onRecStop) recorder.offStop(this._onRecStop);
+    if (this._onRecError) recorder.offError(this._onRecError);
+    if (this._onPlayerEnded) player.offEnded(this._onPlayerEnded);
+    if (this._onPlayerStop) player.offStop(this._onPlayerStop);
   },
 
   withStartText(rec) {
