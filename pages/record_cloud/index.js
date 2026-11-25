@@ -1,6 +1,7 @@
 const app = getApp();
 const recorder = wx.getRecorderManager();
 const player = wx.createInnerAudioContext();
+const { hasConsent, openAgreement } = require('../../utils/voiceConsent');
 
 // 微信 RecorderManager 单次录音时长上限为 600000ms(10分钟)，超出会导致录音失败
 const MAX_DURATION = 10 * 60 * 1000;
@@ -38,6 +39,15 @@ Page({
     startAt: null,
     playing: false,
     maxNameLength: 50 // 名字最大长度
+  },
+
+  onShow() {
+    // 从声纹协议页回来且已同意 -> 继续刚才被拦下的录音
+    if (this.pendingConsentStart) {
+      this.pendingConsentStart = false;
+      if (hasConsent()) this.onStart();
+      else wx.showToast({ title: '未同意声纹协议，无法录音', icon: 'none' });
+    }
   },
 
   onHide() {
@@ -176,6 +186,12 @@ Page({
 
   onStart() {
     this.stopPlayback();
+    // 审核要求:采集声音前必须先取得《声纹授权协议》同意
+    if (!hasConsent()) {
+      this.pendingConsentStart = true;
+      openAgreement();
+      return;
+    }
     wx.authorize({
       scope: 'scope.record',
       success: () => {
@@ -211,6 +227,10 @@ Page({
     this.clearTimer();
     this.clearAutoStopTimer();
     recorder.stop();
+  },
+
+  onOpenAgreement() {
+    wx.navigateTo({ url: '/pages/agreement/index' });
   },
 
   onTogglePlay() {

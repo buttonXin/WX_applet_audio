@@ -2,6 +2,7 @@
 const recorder = wx.getRecorderManager();
 const audio = wx.createInnerAudioContext();
 const fs = wx.getFileSystemManager();
+const { hasConsent, openAgreement } = require('../../utils/voiceConsent');
 
 const SAMPLE_RATE = 24000; // Hz
 const NUM_CHANNELS = 1;
@@ -198,6 +199,15 @@ Page({
     this.endSession();
   },
 
+  onShow() {
+    // 从声纹协议页回来且已同意 -> 继续刚才被拦下的会话
+    if (this.pendingConsentStart) {
+      this.pendingConsentStart = false;
+      if (hasConsent()) this.startSession();
+      else wx.showToast({ title: '未同意声纹协议，无法录音', icon: 'none' });
+    }
+  },
+
   onUnload() {
     this.endSession();
     if (livePage === this) livePage = null;
@@ -208,9 +218,19 @@ Page({
     else this.startSession();
   },
 
+  onOpenAgreement() {
+    wx.navigateTo({ url: '/pages/agreement/index' });
+  },
+
   // ---------- 会话 ----------
 
   startSession() {
+    // 审核要求:采集声音前必须先取得《声纹授权协议》同意
+    if (!hasConsent()) {
+      this.pendingConsentStart = true;
+      openAgreement();
+      return;
+    }
     audio.stop();
     this.setData({ playing: false, debugText: '请求麦克风权限…' });
     this.removeSegFile();
